@@ -80,4 +80,15 @@ public class Pelicula {
             puntuacion.setPuntuacion(puntuacion2);
         }
     }
+
+    public void anadirComentario(Comentario comentario) {
+        comentarios.add(comentario);
+    }
+
+    public Comentario buscarComentarioDe(Cinemaniaco cinemaniaco) {
+        return this.comentarios.stream()
+                .filter(comentario -> comentario.getCinemaniaco().equals(cinemaniaco))
+                .findFirst()
+                .orElse(null);
+    }
 }
