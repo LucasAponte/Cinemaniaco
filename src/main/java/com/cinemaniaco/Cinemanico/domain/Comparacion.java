@@ -1,13 +1,7 @@
 package com.cinemaniaco.Cinemanico.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
@@ -17,10 +11,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comparacion {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_Comparacion;
-    private List<Cinemaniaco> cinemaniacos;
-    private List<Pelicula> peliculas;
 
+    @ManyToMany
+    @JoinTable(
+            name = "comparacion_cinemaniacos",
+            joinColumns = @JoinColumn(name = "comparacion_id"),
+            inverseJoinColumns = @JoinColumn(name = "cinemaniaco_id")
+    )
+    private List<Cinemaniaco> cinemaniacos;
+
+    @ManyToMany
+    @JoinTable(
+            name = "comparacion_peliculas",
+            joinColumns = @JoinColumn(name = "comparacion_id"),
+            inverseJoinColumns = @JoinColumn(name = "pelicula_id")
+    )
+    private List<Pelicula> peliculas;
 }

@@ -1,11 +1,7 @@
 package com.cinemaniaco.Cinemanico.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,17 +15,28 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cinemaniaco {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id_Cinemaniaco;
+
     @OneToOne
     private Persona persona;
+
     private String apodo;
+
     @OneToMany
     private List<Pelicula> peliculas = new ArrayList<>();
+
     @ManyToMany
+    @JoinTable(
+            name = "cinemaniaco_seguidos",
+            joinColumns = @JoinColumn(name = "seguidor_id"),
+            inverseJoinColumns = @JoinColumn(name = "seguido_id")
+    )
     private List<Cinemaniaco> seguidos = new ArrayList<>();
+
     @ManyToMany(mappedBy = "seguidos")
     private List<Cinemaniaco> seguidores = new ArrayList<>();
 
@@ -57,11 +64,11 @@ public class Cinemaniaco {
         if (!this.seguidores.contains(seguidor)) this.seguidores.add(seguidor);
     }
 
-    private boolean puedeSegir(Cinemaniaco cinemaniacoASeguir) {
+    private boolean puedeSeguir(Cinemaniaco cinemaniacoASeguir) {
         return !esMismoUsuario(cinemaniacoASeguir) && !yaLoSigue(cinemaniacoASeguir);
     }
 
-    private List<Cinemaniaco> getAmigosSeguro() {
+    private List<Cinemaniaco> getSeguidsSeguro() {
         return this.seguidos != null ? this.seguidos : new ArrayList<>();
     }
 
@@ -73,10 +80,19 @@ public class Cinemaniaco {
 
     public boolean seguir(Cinemaniaco cinemaniacoASeguir) {
         validarNoNull(cinemaniacoASeguir, "El objetivo no puede ser null");
-        if (!puedeSegir(cinemaniacoASeguir)) return false;
+        if (!puedeSeguir(cinemaniacoASeguir)) return false;
 
         this.seguidos.add(cinemaniacoASeguir);
         cinemaniacoASeguir.agregarSeguidor(this);
+        return true;
+    }
+
+    public boolean dejarDeSeguir(Cinemaniaco cinemaniacoADejarDeSeguir) {
+        if (cinemaniacoADejarDeSeguir == null) return false;
+        if (!yaLoSigue(cinemaniacoADejarDeSeguir)) return false;
+
+        this.seguidos.remove(cinemaniacoADejarDeSeguir);
+        cinemaniacoADejarDeSeguir.getSeguidores().remove(this);
         return true;
     }
 
@@ -91,9 +107,8 @@ public class Cinemaniaco {
 
     public List<Cinemaniaco> amigosEnComun(Cinemaniaco otro) {
         if (otro == null) return new ArrayList<>();
-
-        Set<Cinemaniaco> conjunto = new HashSet<>(getAmigosSeguro());
-        conjunto.retainAll(otro.getAmigosSeguro());
+        Set<Cinemaniaco> conjunto = new HashSet<>(getSeguidsSeguro());
+        conjunto.retainAll(otro.getSeguidsSeguro());
         return new ArrayList<>(conjunto);
     }
 }
