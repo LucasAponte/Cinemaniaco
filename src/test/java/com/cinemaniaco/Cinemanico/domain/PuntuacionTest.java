@@ -45,7 +45,7 @@ public class PuntuacionTest {
         double puntuacion1 = 4.5;
         double puntuacion2 = 3.0;
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion1);
-        pelicula.modificarPuntuacion(cinemaniaco,puntuacion2);
+        pelicula.anadirPuntuacion(cinemaniaco,puntuacion2);
         assertEquals(1,pelicula.cantPuntuaciones());
         assertEquals(puntuacion2, pelicula.buscarPuntuancionPorCinemaniaco(cinemaniaco).getPuntuacion());
     }

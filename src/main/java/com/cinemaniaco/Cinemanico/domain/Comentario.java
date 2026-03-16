@@ -1,10 +1,6 @@
 package com.cinemaniaco.Cinemanico.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,11 +16,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Comentario {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_Comentario;
     @ManyToOne
     @JoinColumn(name = "cinemaniaco_id")
     private Cinemaniaco cinemaniaco;
     private int meGusta = 0;
+    @ManyToMany
     private List<Cinemaniaco> meGustaCinemaniacos = new ArrayList<>();
     private String texto;
     @OneToMany
@@ -56,7 +54,7 @@ public class Comentario {
     }
 
     public void quitarMegustaDe(Cinemaniaco cinemaniaco) {
-        if(!tieneMeGustaDe(cinemaniaco)) {
+        if(tieneMeGustaDe(cinemaniaco)) {
             this.meGustaCinemaniacos.remove(cinemaniaco);
             this.meGusta--;
         }

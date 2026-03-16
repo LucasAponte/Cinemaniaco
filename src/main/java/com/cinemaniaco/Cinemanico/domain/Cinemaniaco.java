@@ -1,10 +1,6 @@
 package com.cinemaniaco.Cinemanico.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,11 +20,12 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cinemaniaco {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id_Cinemaniaco;
     @OneToOne
     private Persona persona;
-    private String Apodo;
+    private String apodo;
     @OneToMany
     private List<Pelicula> peliculas = new ArrayList<>();
     @ManyToMany
@@ -38,7 +35,7 @@ public class Cinemaniaco {
 
     public Cinemaniaco(Persona persona, String apodo) {
         this.persona = persona;
-        Apodo = apodo;
+        this.apodo = apodo;
     }
 
     // ─── Auxiliares privadas ────────────────────────────────────────────────

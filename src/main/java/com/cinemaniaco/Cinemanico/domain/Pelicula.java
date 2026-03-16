@@ -15,11 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 public class Pelicula {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_Pelicula;
     private String titulo;
     private String director;
     private int anioEstreno;
+    @ElementCollection
     private List<String> actores;
+    @ElementCollection
     private List<String> generos;
 
     //Cosas de funcionalidad
@@ -43,11 +46,12 @@ public class Pelicula {
         if(puntuacion != null){
            puntuacion.setPuntuacion(puntos);
         }else{
-            Puntuacion nuevaPuntuacion = new Puntuacion();
-            nuevaPuntuacion.setCinemaniaco(cinemaniaco);
-            nuevaPuntuacion.setPuntuacion(puntos);
-            puntuaciones.add(nuevaPuntuacion);
+            anadirNuevaPuntuacion(cinemaniaco, puntos);
         }
+    }
+
+    private void anadirNuevaPuntuacion(Cinemaniaco cinemaniaco, double puntos) {
+        this.puntuaciones.add(new Puntuacion(cinemaniaco,puntos));
     }
 
     public int cantPuntuaciones() {
@@ -66,19 +70,10 @@ public class Pelicula {
     }
 
     public Puntuacion buscarPuntuancionPorCinemaniaco(Cinemaniaco cinemaniaco) {
-        for (Puntuacion p : puntuaciones) {
-            if (p.getCinemaniaco().equals(cinemaniaco)) {
-                return p;
-            }
-        }
-        return null; // No se encontró una puntuación para ese cinemaniaco
-    }
-
-    public void modificarPuntuacion(Cinemaniaco cinemaniaco, double puntuacion2) {
-        Puntuacion puntuacion = buscarPuntuancionPorCinemaniaco(cinemaniaco);
-        if(puntuacion != null){
-            puntuacion.setPuntuacion(puntuacion2);
-        }
+        return this.puntuaciones.stream()
+                .filter(puntuacion -> puntuacion.getCinemaniaco().equals(cinemaniaco))
+                .findFirst()
+                .orElse(null);
     }
 
     public void anadirComentario(Comentario comentario) {
