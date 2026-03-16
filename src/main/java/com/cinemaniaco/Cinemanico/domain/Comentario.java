@@ -23,6 +23,7 @@ public class Comentario {
     private Cinemaniaco cinemaniaco;
     private int meGusta = 0;
     @ManyToMany
+    @JoinColumn(name = "cinemaniaco_id")
     private List<Cinemaniaco> meGustaCinemaniacos = new ArrayList<>();
     private String texto;
     @OneToMany

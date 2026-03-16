@@ -29,8 +29,8 @@ public class Cinemaniaco {
     @OneToMany
     private List<Pelicula> peliculas = new ArrayList<>();
     @ManyToMany
-    private List<Cinemaniaco> amigos = new ArrayList<>();
-    @ManyToMany(mappedBy = "amigos")
+    private List<Cinemaniaco> seguidos = new ArrayList<>();
+    @ManyToMany(mappedBy = "seguidos")
     private List<Cinemaniaco> seguidores = new ArrayList<>();
 
     public Cinemaniaco(Persona persona, String apodo) {
@@ -49,7 +49,7 @@ public class Cinemaniaco {
     }
 
     private boolean yaLoSigue(Cinemaniaco cinemaniacoASeguir) {
-        return this.amigos.contains(cinemaniacoASeguir);
+        return this.seguidos.contains(cinemaniacoASeguir);
     }
 
     private void agregarSeguidor(Cinemaniaco seguidor) {
@@ -62,7 +62,7 @@ public class Cinemaniaco {
     }
 
     private List<Cinemaniaco> getAmigosSeguro() {
-        return this.amigos != null ? this.amigos : new ArrayList<>();
+        return this.seguidos != null ? this.seguidos : new ArrayList<>();
     }
 
     private List<Cinemaniaco> getSeguidoresSeguro() {
@@ -75,7 +75,7 @@ public class Cinemaniaco {
         validarNoNull(cinemaniacoASeguir, "El objetivo no puede ser null");
         if (!puedeSegir(cinemaniacoASeguir)) return false;
 
-        this.amigos.add(cinemaniacoASeguir);
+        this.seguidos.add(cinemaniacoASeguir);
         cinemaniacoASeguir.agregarSeguidor(this);
         return true;
     }
