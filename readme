@@ -1,0 +1,108 @@
+# 🎬 Cinemaniaco
+
+API REST para una red social de cinéfilos, desarrollada con **Spring Boot** y **Java**.
+Los usuarios pueden registrarse, seguirse entre sí, puntuar y comentar películas, y obtener un resumen generado por IA a partir de los comentarios de la comunidad.
+
+---
+
+## 🧠 Sobre el desarrollo
+
+Este proyecto fue desarrollado de forma **incremental y con uso intencional de IA como herramienta de productividad**, no como reemplazo del criterio de diseño.
+
+El flujo de trabajo fue el siguiente:
+
+- El **diseño del dominio, las relaciones entre entidades y la lógica de negocio** fueron pensados y escritos a mano: qué significa que un `Cinemaniaco` siga a otro, cómo se acumulan puntuaciones, cómo se estructuran los comentarios anidados, etc.
+- Para tareas **repetitivas y estructuralmente predecibles**, se usó IA del IDE como acelerador. Por ejemplo: una vez escrito el primer `Repository`, se le pidió a la IA que generara los demás siguiendo el mismo patrón. Lo mismo con la estructura base de algunos `Service` y `Controller`.
+- La **integración con OpenAI** (resumen de comentarios por IA) fue diseñada e implementada manualmente: el prompt, el manejo de la respuesta, la persistencia del resultado y los endpoints correspondientes.
+- Cada fragmento generado fue revisado, corregido y ajustado cuando era necesario, incluyendo fixes de mapeo JPA que la IA no detectó.
+
+---
+
+## 🛠️ Tecnologías
+
+- Java 17
+- Spring Boot 3
+- Spring Data JPA
+- Hibernate
+- MySQL (o H2 para desarrollo)
+- Lombok
+- OpenAI API (`gpt-4o-mini`)
+- Maven
+
+---
+
+## 📦 Estructura del proyecto
+
+```
+src/main/java/com/cinemaniaco/Cinemanico/
+├── config/
+│   └── AppConfig.java           # Bean de RestTemplate
+├── controller/
+│   ├── CinemaniacoController.java
+│   └── PeliculaController.java
+├── domain/
+│   ├── Cinemaniaco.java
+│   ├── Comentario.java
+│   ├── Comparacion.java
+│   ├── Pelicula.java
+│   ├── Persona.java
+│   └── Puntuacion.java
+├── repository/
+│   ├── CinemaniacoRepository.java
+│   ├── ComentarioRepository.java
+│   ├── ComparacionRepository.java
+│   ├── PeliculaRepository.java
+│   ├── PersonaRepository.java
+│   └── PuntuacionRepository.java
+└── service/
+    ├── CinemaniacoService.java
+    └── PeliculaService.java
+```
+
+---
+
+## 🚀 Endpoints principales
+
+### Películas — `/api/peliculas`
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/peliculas` | Lista todas las películas |
+| `GET` | `/api/peliculas/{id}` | Detalle de una película |
+| `POST` | `/api/peliculas` | Crea una película |
+| `PUT` | `/api/peliculas/{id}` | Actualiza una película |
+| `DELETE` | `/api/peliculas/{id}` | Elimina una película |
+| `POST` | `/api/peliculas/{id}/puntuaciones` | Puntúa una película (0–10) |
+| `GET` | `/api/peliculas/{id}/puntuaciones/promedio` | Promedio de puntuaciones |
+| `POST` | `/api/peliculas/{id}/comentarios` | Comenta una película |
+| `POST` | `/api/peliculas/comentarios/{id}/respuestas` | Responde un comentario |
+| `POST` | `/api/peliculas/comentarios/{id}/megusta` | Da me gusta a un comentario |
+| `DELETE` | `/api/peliculas/comentarios/{id}/megusta` | Quita me gusta |
+| `POST` | `/api/peliculas/{id}/resumen-ia` | Genera resumen IA de los comentarios |
+| `GET` | `/api/peliculas/{id}/resumen-ia` | Obtiene el último resumen generado |
+
+### Cinemaniacos — `/api/cinemaniacos`
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/cinemaniacos` | Lista todos |
+| `GET` | `/api/cinemaniacos/{id}` | Detalle de un cinemaniaco |
+| `GET` | `/api/cinemaniacos/buscar?apodo=` | Buscar por apodo |
+| `POST` | `/api/cinemaniacos` | Registra un nuevo cinemaniaco |
+| `PATCH` | `/api/cinemaniacos/{id}/apodo` | Actualiza el apodo |
+| `DELETE` | `/api/cinemaniacos/{id}` | Elimina un cinemaniaco |
+| `POST` | `/api/cinemaniacos/{id}/seguir/{idASeguir}` | Seguir a otro cinemaniaco |
+| `DELETE` | `/api/cinemaniacos/{id}/seguir/{idASeguir}` | Dejar de seguir |
+| `GET` | `/api/cinemaniacos/{id}/seguidos` | Lista de seguidos |
+| `GET` | `/api/cinemaniacos/{id}/seguidores` | Lista de seguidores |
+| `GET` | `/api/cinemaniacos/{id}/seguidores/cantidad` | Cantidad de seguidores |
+| `GET` | `/api/cinemaniacos/{idA}/amigos-en-comun/{idB}` | Seguidos en común |
+
+
+## 🗺️ Próximos pasos
+
+- [ ] DTOs para no exponer entidades directamente en los endpoints
+- [ ] Manejo global de excepciones (`@ControllerAdvice`)
+- [ ] Validaciones con `@Valid` y Bean Validation
+- [ ] Tests unitarios e de integración
+- [ ] Autenticación con Spring Security + JWT

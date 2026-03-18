@@ -36,8 +36,8 @@ public class PuntuacionTest {
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion1);
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion2);
         assertEquals(1,pelicula.cantPuntuaciones());
-        assertFalse(puntuacion1 == pelicula.buscarPuntuancionPorCinemaniaco(cinemaniaco).getPuntuacion());
-        assertTrue(puntuacion2 == pelicula.buscarPuntuancionPorCinemaniaco(cinemaniaco).getPuntuacion());
+        assertFalse(puntuacion1 == pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco).getPuntuacion());
+        assertTrue(puntuacion2 == pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco).getPuntuacion());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class PuntuacionTest {
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion1);
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion2);
         assertEquals(1,pelicula.cantPuntuaciones());
-        assertEquals(puntuacion2, pelicula.buscarPuntuancionPorCinemaniaco(cinemaniaco).getPuntuacion());
+        assertEquals(puntuacion2, pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco).getPuntuacion());
     }
 
     @Test

@@ -24,7 +24,7 @@ public class CinemaniacoTest {
         c2.setId_Cinemaniaco(2L);
 
         assertTrue(c1.seguir(c2));
-        assertTrue(c1.getAmigos().contains(c2));
+        assertTrue(c1.getSeguidos().contains(c2));
         assertTrue(c2.getSeguidores().contains(c1));
     }
 
