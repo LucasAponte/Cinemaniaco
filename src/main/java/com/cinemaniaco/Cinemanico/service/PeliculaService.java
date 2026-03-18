@@ -2,8 +2,16 @@ package com.cinemaniaco.Cinemanico.service;
 
 import com.cinemaniaco.Cinemanico.domain.Cinemaniaco;
 import com.cinemaniaco.Cinemanico.domain.Comentario;
+import com.cinemaniaco.Cinemanico.exception.BusinessException;
+import com.cinemaniaco.Cinemanico.exception.ResourceNotFoundException;
 import com.cinemaniaco.Cinemanico.domain.Pelicula;
 import com.cinemaniaco.Cinemanico.domain.Puntuacion;
+import com.cinemaniaco.Cinemanico.dto.request.ComentarioRequest;
+import com.cinemaniaco.Cinemanico.dto.request.PeliculaRequest;
+import com.cinemaniaco.Cinemanico.dto.request.PuntuacionRequest;
+import com.cinemaniaco.Cinemanico.dto.response.ComentarioResponse;
+import com.cinemaniaco.Cinemanico.dto.response.PeliculaResponse;
+import com.cinemaniaco.Cinemanico.dto.response.PuntuacionResponse;
 import com.cinemaniaco.Cinemanico.repository.CinemaniacoRepository;
 import com.cinemaniaco.Cinemanico.repository.ComentarioRepository;
 import com.cinemaniaco.Cinemanico.repository.PeliculaRepository;
@@ -33,29 +41,36 @@ public class PeliculaService {
 
     // ─── CRUD ───────────────────────────────────────────────────────────────
 
-    public List<Pelicula> listarTodas() {
-        return peliculaRepository.findAll();
+    public List<PeliculaResponse> listarTodas() {
+        return peliculaRepository.findAll()
+                .stream().map(PeliculaResponse::from).toList();
     }
 
-    public Pelicula buscarPorId(Long id) {
-        return peliculaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Película no encontrada con id: " + id));
-    }
-
-    @Transactional
-    public Pelicula crear(Pelicula pelicula) {
-        return peliculaRepository.save(pelicula);
+    public PeliculaResponse buscarPorIdDto(Long id) {
+        return PeliculaResponse.from(buscarPorId(id));
     }
 
     @Transactional
-    public Pelicula actualizar(Long id, Pelicula datos) {
+    public PeliculaResponse crear(PeliculaRequest request) {
+        Pelicula pelicula = new Pelicula(
+                request.getTitulo(),
+                request.getDirector(),
+                request.getAnioEstreno(),
+                request.getActores(),
+                request.getGeneros()
+        );
+        return PeliculaResponse.from(peliculaRepository.save(pelicula));
+    }
+
+    @Transactional
+    public PeliculaResponse actualizar(Long id, PeliculaRequest request) {
         Pelicula pelicula = buscarPorId(id);
-        pelicula.setTitulo(datos.getTitulo());
-        pelicula.setDirector(datos.getDirector());
-        pelicula.setAnioEstreno(datos.getAnioEstreno());
-        pelicula.setActores(datos.getActores());
-        pelicula.setGeneros(datos.getGeneros());
-        return peliculaRepository.save(pelicula);
+        pelicula.setTitulo(request.getTitulo());
+        pelicula.setDirector(request.getDirector());
+        pelicula.setAnioEstreno(request.getAnioEstreno());
+        pelicula.setActores(request.getActores());
+        pelicula.setGeneros(request.getGeneros());
+        return PeliculaResponse.from(peliculaRepository.save(pelicula));
     }
 
     @Transactional
@@ -67,15 +82,11 @@ public class PeliculaService {
     // ─── Puntuaciones ───────────────────────────────────────────────────────
 
     @Transactional
-    public double puntuarPelicula(Long peliculaId, Long cinemaniacoId, double puntos) {
-        if (puntos < 0 || puntos > 10)
-            throw new IllegalArgumentException("La puntuación debe estar entre 0 y 10");
+    public double puntuarPelicula(Long peliculaId, PuntuacionRequest request) {
+        Pelicula pelicula     = buscarPorId(peliculaId);
+        Cinemaniaco cinemaniaco = buscarCinemaniaco(request.getCinemaniacoId());
 
-        Pelicula pelicula = buscarPorId(peliculaId);
-        Cinemaniaco cinemaniaco = cinemaniacoRepository.findById(cinemaniacoId)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado con id: " + cinemaniacoId));
-
-        pelicula.anadirPuntuacion(cinemaniaco, puntos);
+        pelicula.anadirPuntuacion(cinemaniaco, request.getPuntos());
         peliculaRepository.save(pelicula);
         return pelicula.calcularPuntuacionPromedio();
     }
@@ -84,48 +95,43 @@ public class PeliculaService {
         return buscarPorId(peliculaId).calcularPuntuacionPromedio();
     }
 
-    public Puntuacion obtenerPuntuacionDe(Long peliculaId, Long cinemaniacoId) {
-        Pelicula pelicula = buscarPorId(peliculaId);
-        Cinemaniaco cinemaniaco = cinemaniacoRepository.findById(cinemaniacoId)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado"));
-        return pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco);
+    public PuntuacionResponse obtenerPuntuacionDe(Long peliculaId, Long cinemaniacoId) {
+        Pelicula pelicula       = buscarPorId(peliculaId);
+        Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
+        Puntuacion puntuacion   = pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco);
+        return PuntuacionResponse.from(puntuacion);
     }
 
     // ─── Comentarios ────────────────────────────────────────────────────────
 
     @Transactional
-    public Comentario comentarPelicula(Long peliculaId, Long cinemaniacoId, String texto) {
-        Pelicula pelicula = buscarPorId(peliculaId);
-        Cinemaniaco cinemaniaco = cinemaniacoRepository.findById(cinemaniacoId)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado"));
+    public ComentarioResponse comentarPelicula(Long peliculaId, ComentarioRequest request) {
+        Pelicula pelicula       = buscarPorId(peliculaId);
+        Cinemaniaco cinemaniaco = buscarCinemaniaco(request.getCinemaniacoId());
 
-        Comentario comentario = new Comentario(cinemaniaco, texto);
+        Comentario comentario = new Comentario(cinemaniaco, request.getTexto());
         comentarioRepository.save(comentario);
         pelicula.anadirComentario(comentario);
         peliculaRepository.save(pelicula);
-        return comentario;
+        return ComentarioResponse.from(comentario);
     }
 
     @Transactional
-    public Comentario responderComentario(Long comentarioPadreId, Long cinemaniacoId, String texto) {
-        Comentario padre = comentarioRepository.findById(comentarioPadreId)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
-        Cinemaniaco cinemaniaco = cinemaniacoRepository.findById(cinemaniacoId)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado"));
+    public ComentarioResponse responderComentario(Long comentarioPadreId, ComentarioRequest request) {
+        Comentario padre        = buscarComentario(comentarioPadreId);
+        Cinemaniaco cinemaniaco = buscarCinemaniaco(request.getCinemaniacoId());
 
-        Comentario respuesta = new Comentario(cinemaniaco, texto);
+        Comentario respuesta = new Comentario(cinemaniaco, request.getTexto());
         comentarioRepository.save(respuesta);
         padre.agregarComentario(respuesta);
         comentarioRepository.save(padre);
-        return respuesta;
+        return ComentarioResponse.from(respuesta);
     }
 
     @Transactional
     public int darMeGusta(Long comentarioId, Long cinemaniacoId) {
-        Comentario comentario = comentarioRepository.findById(comentarioId)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
-        Cinemaniaco cinemaniaco = cinemaniacoRepository.findById(cinemaniacoId)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado"));
+        Comentario comentario   = buscarComentario(comentarioId);
+        Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
 
         comentario.agregarMeGusta(cinemaniaco);
         comentarioRepository.save(comentario);
@@ -134,10 +140,8 @@ public class PeliculaService {
 
     @Transactional
     public int quitarMeGusta(Long comentarioId, Long cinemaniacoId) {
-        Comentario comentario = comentarioRepository.findById(comentarioId)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
-        Cinemaniaco cinemaniaco = cinemaniacoRepository.findById(cinemaniacoId)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado"));
+        Comentario comentario   = buscarComentario(comentarioId);
+        Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
 
         comentario.quitarMeGustaDe(cinemaniaco);
         comentarioRepository.save(comentario);
@@ -155,11 +159,9 @@ public class PeliculaService {
                 .toList();
 
         if (textos.isEmpty())
-            throw new RuntimeException("La película no tiene comentarios aún para generar un resumen");
+            throw new BusinessException("La película no tiene comentarios aún para generar un resumen");
 
-        String prompt = construirPrompt(pelicula.getTitulo(), textos);
-        String resumen = llamarOpenAI(prompt);
-
+        String resumen = llamarOpenAI(construirPrompt(pelicula.getTitulo(), textos));
         pelicula.setResumenIA(resumen);
         peliculaRepository.save(pelicula);
         return resumen;
@@ -168,20 +170,36 @@ public class PeliculaService {
     public String obtenerResumenIA(Long peliculaId) {
         Pelicula pelicula = buscarPorId(peliculaId);
         if (pelicula.getResumenIA() == null)
-            throw new RuntimeException("Todavía no se generó un resumen para esta película");
+            throw new BusinessException("Todavía no se generó un resumen para esta película");
         return pelicula.getResumenIA();
     }
 
-    // ─── Auxiliares OpenAI ──────────────────────────────────────────────────
+    // ─── Auxiliares internos ────────────────────────────────────────────────
 
-    private String construirPrompt(String tituloPelicula, List<String> comentarios) {
+    public Pelicula buscarPorId(Long id) {
+        return peliculaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Película no encontrada con id: " + id));
+    }
+
+    private Cinemaniaco buscarCinemaniaco(Long id) {
+        return cinemaniacoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cinemaniaco no encontrado con id: " + id));
+    }
+
+    private Comentario buscarComentario(Long id) {
+        return comentarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
+    }
+
+    private String construirPrompt(String titulo, List<String> comentarios) {
         StringBuilder sb = new StringBuilder();
         sb.append("Sos un crítico de cine. A continuación te paso opiniones de usuarios sobre la película '")
-                .append(tituloPelicula)
+                .append(titulo)
                 .append("'. Hacé un resumen breve (máximo 3 oraciones) que capture el sentimiento general:\n\n");
         comentarios.forEach(c -> sb.append("- ").append(c).append("\n"));
         return sb.toString();
     }
+    //TODO Ver de hacer una clase para todo lo que es IA
 
     @SuppressWarnings("unchecked")
     private String llamarOpenAI(String prompt) {
@@ -191,32 +209,23 @@ public class PeliculaService {
 
         Map<String, Object> requestBody = Map.of(
                 "model", "gpt-4o-mini",
-                "messages", List.of(
-                        Map.of("role", "user", "content", prompt)
-                ),
+                "messages", List.of(Map.of("role", "user", "content", prompt)),
                 "max_tokens", 300,
                 "temperature", 0.7
         );
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-
         try {
             ResponseEntity<Map> response = restTemplate.exchange(
-                    OPENAI_URL,
-                    HttpMethod.POST,
-                    request,
-                    Map.class
+                    OPENAI_URL, HttpMethod.POST,
+                    new HttpEntity<>(requestBody, headers), Map.class
             );
-
             Map<String, Object> body = response.getBody();
-            if (body == null) throw new RuntimeException("Respuesta vacía de OpenAI");
-
+            if (body == null) throw new BusinessException("Respuesta vacía de OpenAI");
             List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
             return (String) message.get("content");
-
         } catch (Exception e) {
-            throw new RuntimeException("Error al comunicarse con OpenAI: " + e.getMessage(), e);
+            throw new BusinessException("Error al comunicarse con OpenAI: " + e.getMessage());
         }
     }
 }

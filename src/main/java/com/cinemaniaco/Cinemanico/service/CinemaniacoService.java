@@ -2,6 +2,10 @@ package com.cinemaniaco.Cinemanico.service;
 
 import com.cinemaniaco.Cinemanico.domain.Cinemaniaco;
 import com.cinemaniaco.Cinemanico.domain.Persona;
+import com.cinemaniaco.Cinemanico.exception.BusinessException;
+import com.cinemaniaco.Cinemanico.exception.ResourceNotFoundException;
+import com.cinemaniaco.Cinemanico.dto.request.CinemaniacoRequest;
+import com.cinemaniaco.Cinemanico.dto.response.CinemaniacoResponse;
 import com.cinemaniaco.Cinemanico.repository.CinemaniacoRepository;
 import com.cinemaniaco.Cinemanico.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,32 +23,37 @@ public class CinemaniacoService {
 
     // ─── CRUD ───────────────────────────────────────────────────────────────
 
-    public List<Cinemaniaco> listarTodos() {
-        return cinemaniacoRepository.findAll();
+    public List<CinemaniacoResponse> listarTodos() {
+        return cinemaniacoRepository.findAll()
+                .stream().map(CinemaniacoResponse::from).toList();
     }
 
-    public Cinemaniaco buscarPorId(Long id) {
-        return cinemaniacoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado con id: " + id));
+    public CinemaniacoResponse buscarPorIdDto(Long id) {
+        return CinemaniacoResponse.from(buscarPorId(id));
     }
 
-    public Cinemaniaco buscarPorApodo(String apodo) {
-        return cinemaniacoRepository.findByApodo(apodo)
-                .orElseThrow(() -> new RuntimeException("Cinemaniaco no encontrado con apodo: " + apodo));
+    public CinemaniacoResponse buscarPorApodoDto(String apodo) {
+        return CinemaniacoResponse.from(buscarPorApodo(apodo));
     }
 
     @Transactional
-    public Cinemaniaco registrar(Persona persona, String apodo) {
+    public CinemaniacoResponse registrar(CinemaniacoRequest request) {
+        Persona persona = new Persona(
+                request.getPersona().getEdad(),
+                request.getPersona().getNombre(),
+                request.getPersona().getApellido(),
+                request.getPersona().getEmail()
+        );
         Persona personaGuardada = personaRepository.save(persona);
-        Cinemaniaco cinemaniaco = new Cinemaniaco(personaGuardada, apodo);
-        return cinemaniacoRepository.save(cinemaniaco);
+        Cinemaniaco cinemaniaco = new Cinemaniaco(personaGuardada, request.getApodo());
+        return CinemaniacoResponse.from(cinemaniacoRepository.save(cinemaniaco));
     }
 
     @Transactional
-    public Cinemaniaco actualizarApodo(Long id, String nuevoApodo) {
+    public CinemaniacoResponse actualizarApodo(Long id, String nuevoApodo) {
         Cinemaniaco cinemaniaco = buscarPorId(id);
         cinemaniaco.setApodo(nuevoApodo);
-        return cinemaniacoRepository.save(cinemaniaco);
+        return CinemaniacoResponse.from(cinemaniacoRepository.save(cinemaniaco));
     }
 
     @Transactional
@@ -57,10 +66,11 @@ public class CinemaniacoService {
 
     @Transactional
     public boolean seguir(Long seguidorId, Long seguidoId) {
-        if (seguidorId.equals(seguidoId)) throw new IllegalArgumentException("Un cinemaniaco no puede seguirse a sí mismo");
+        if (seguidorId.equals(seguidoId))
+            throw new BusinessException("Un cinemaniaco no puede seguirse a sí mismo");
 
         Cinemaniaco seguidor = buscarPorId(seguidorId);
-        Cinemaniaco seguido = buscarPorId(seguidoId);
+        Cinemaniaco seguido  = buscarPorId(seguidoId);
 
         boolean resultado = seguidor.seguir(seguido);
         if (resultado) {
@@ -73,7 +83,7 @@ public class CinemaniacoService {
     @Transactional
     public boolean dejarDeSeguir(Long seguidorId, Long seguidoId) {
         Cinemaniaco seguidor = buscarPorId(seguidorId);
-        Cinemaniaco seguido = buscarPorId(seguidoId);
+        Cinemaniaco seguido  = buscarPorId(seguidoId);
 
         boolean resultado = seguidor.dejarDeSeguir(seguido);
         if (resultado) {
@@ -83,21 +93,34 @@ public class CinemaniacoService {
         return resultado;
     }
 
-    public List<Cinemaniaco> obtenerSeguidos(Long id) {
-        return buscarPorId(id).getSeguidos();
+    public List<CinemaniacoResponse> obtenerSeguidos(Long id) {
+        return buscarPorId(id).getSeguidos()
+                .stream().map(CinemaniacoResponse::from).toList();
     }
 
-    public List<Cinemaniaco> obtenerSeguidores(Long id) {
-        return buscarPorId(id).getSeguidores();
+    public List<CinemaniacoResponse> obtenerSeguidores(Long id) {
+        return buscarPorId(id).getSeguidores()
+                .stream().map(CinemaniacoResponse::from).toList();
     }
 
     public int contarSeguidores(Long id) {
         return buscarPorId(id).contarSeguidores();
     }
 
-    public List<Cinemaniaco> amigosEnComun(Long idA, Long idB) {
-        Cinemaniaco a = buscarPorId(idA);
-        Cinemaniaco b = buscarPorId(idB);
-        return a.amigosEnComun(b);
+    public List<CinemaniacoResponse> amigosEnComun(Long idA, Long idB) {
+        return buscarPorId(idA).amigosEnComun(buscarPorId(idB))
+                .stream().map(CinemaniacoResponse::from).toList();
+    }
+
+    // ─── Interno (para otros services) ──────────────────────────────────────
+
+    public Cinemaniaco buscarPorId(Long id) {
+        return cinemaniacoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cinemaniaco no encontrado con id: " + id));
+    }
+
+    public Cinemaniaco buscarPorApodo(String apodo) {
+        return cinemaniacoRepository.findByApodo(apodo)
+                .orElseThrow(() -> new ResourceNotFoundException("Cinemaniaco no encontrado con apodo: " + apodo));
     }
 }

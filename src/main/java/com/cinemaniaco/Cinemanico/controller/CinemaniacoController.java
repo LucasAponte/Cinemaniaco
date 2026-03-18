@@ -1,15 +1,15 @@
 package com.cinemaniaco.Cinemanico.controller;
 
-import com.cinemaniaco.Cinemanico.domain.Cinemaniaco;
-import com.cinemaniaco.Cinemanico.domain.Persona;
+import com.cinemaniaco.Cinemanico.dto.request.CinemaniacoRequest;
+import com.cinemaniaco.Cinemanico.dto.response.CinemaniacoResponse;
 import com.cinemaniaco.Cinemanico.service.CinemaniacoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cinemaniacos")
@@ -21,44 +21,27 @@ public class CinemaniacoController {
     // ─── CRUD ───────────────────────────────────────────────────────────────
 
     @GetMapping
-    public ResponseEntity<List<Cinemaniaco>> listarTodos() {
+    public ResponseEntity<List<CinemaniacoResponse>> listarTodos() {
         return ResponseEntity.ok(cinemaniacoService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cinemaniaco> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(cinemaniacoService.buscarPorId(id));
+    public ResponseEntity<CinemaniacoResponse> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(cinemaniacoService.buscarPorIdDto(id));
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<Cinemaniaco> buscarPorApodo(@RequestParam String apodo) {
-        return ResponseEntity.ok(cinemaniacoService.buscarPorApodo(apodo));
+    public ResponseEntity<CinemaniacoResponse> buscarPorApodo(@RequestParam String apodo) {
+        return ResponseEntity.ok(cinemaniacoService.buscarPorApodoDto(apodo));
     }
 
-    /**
-     * POST /api/cinemaniacos
-     * Body: { "persona": { "nombre": "...", "apellido": "...", "edad": 25, "email": "..." }, "apodo": "..." }
-     */
     @PostMapping
-    public ResponseEntity<Cinemaniaco> registrar(@RequestBody Map<String, Object> body) {
-        // Se reciben los datos anidados para crear Persona + Cinemaniaco en un solo request
-        @SuppressWarnings("unchecked")
-        Map<String, Object> personaData = (Map<String, Object>) body.get("persona");
-
-        Persona persona = new Persona(
-                (Integer) personaData.get("edad"),
-                (String) personaData.get("nombre"),
-                (String) personaData.get("apellido"),
-                (String) personaData.get("email")
-        );
-        String apodo = (String) body.get("apodo");
-
-        Cinemaniaco nuevo = cinemaniacoService.registrar(persona, apodo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+    public ResponseEntity<CinemaniacoResponse> registrar(@Valid @RequestBody CinemaniacoRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(cinemaniacoService.registrar(request));
     }
 
     @PatchMapping("/{id}/apodo")
-    public ResponseEntity<Cinemaniaco> actualizarApodo(
+    public ResponseEntity<CinemaniacoResponse> actualizarApodo(
             @PathVariable Long id,
             @RequestParam String nuevoApodo) {
         return ResponseEntity.ok(cinemaniacoService.actualizarApodo(id, nuevoApodo));
@@ -72,9 +55,6 @@ public class CinemaniacoController {
 
     // ─── Social ─────────────────────────────────────────────────────────────
 
-    /**
-     * POST /api/cinemaniacos/{id}/seguir/{idASeguir}
-     */
     @PostMapping("/{id}/seguir/{idASeguir}")
     public ResponseEntity<String> seguir(
             @PathVariable Long id,
@@ -94,12 +74,12 @@ public class CinemaniacoController {
     }
 
     @GetMapping("/{id}/seguidos")
-    public ResponseEntity<List<Cinemaniaco>> obtenerSeguidos(@PathVariable Long id) {
+    public ResponseEntity<List<CinemaniacoResponse>> obtenerSeguidos(@PathVariable Long id) {
         return ResponseEntity.ok(cinemaniacoService.obtenerSeguidos(id));
     }
 
     @GetMapping("/{id}/seguidores")
-    public ResponseEntity<List<Cinemaniaco>> obtenerSeguidores(@PathVariable Long id) {
+    public ResponseEntity<List<CinemaniacoResponse>> obtenerSeguidores(@PathVariable Long id) {
         return ResponseEntity.ok(cinemaniacoService.obtenerSeguidores(id));
     }
 
@@ -109,7 +89,7 @@ public class CinemaniacoController {
     }
 
     @GetMapping("/{idA}/amigos-en-comun/{idB}")
-    public ResponseEntity<List<Cinemaniaco>> amigosEnComun(
+    public ResponseEntity<List<CinemaniacoResponse>> amigosEnComun(
             @PathVariable Long idA,
             @PathVariable Long idB) {
         return ResponseEntity.ok(cinemaniacoService.amigosEnComun(idA, idB));
