@@ -56,7 +56,7 @@ public class ComentarioTest {
         comentario.agregarMeGusta(cinemaniaco2);
         assert comentario.getMeGusta() == 2;
         // Simular quitar un "Me gusta"
-        comentario.quitarMegustaDe(cinemaniaco);
+        comentario.quitarMeGustaDe(cinemaniaco);
         comentario.setMeGusta(comentario.getMeGusta() - 1);
         assert comentario.getMeGusta() == 1;
         assert !comentario.tieneMeGustaDe(cinemaniaco);
