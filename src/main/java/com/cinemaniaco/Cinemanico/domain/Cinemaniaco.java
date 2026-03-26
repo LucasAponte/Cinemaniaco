@@ -23,7 +23,7 @@ public class Cinemaniaco {
 
     @OneToOne
     private Persona persona;
-
+    @EqualsAndHashCode.Include
     private String apodo;
 
     @OneToMany

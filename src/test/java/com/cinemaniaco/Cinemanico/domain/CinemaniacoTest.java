@@ -1,13 +1,15 @@
 package com.cinemaniaco.Cinemanico.domain;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CinemaniacoTest {
 
     @Test
-    public void seguir_noSePuedeSeguirASiMismo() {
+    @DisplayName("Cinemaniatico no puede seguirse a sí mismo, devuelve False")
+    public void seguirNoSePuedeSeguirASiMismoDevuelveFalse() {
         Persona p = new Persona();
         Cinemaniaco c = new Cinemaniaco(p, "uno");
         c.setId_Cinemaniaco(1L);
@@ -15,7 +17,8 @@ public class CinemaniacoTest {
     }
 
     @Test
-    public void seguir_agregaSeguidorYAmigo() {
+    @DisplayName("Seguir agrega seguidor y seguido, devuelve valor correcto")
+    public void seguirAgregaSeguidorYSeguidoDevuelveTrue() {
         Persona p1 = new Persona();
         Persona p2 = new Persona();
         Cinemaniaco c1 = new Cinemaniaco(p1, "uno");
@@ -29,7 +32,8 @@ public class CinemaniacoTest {
     }
 
     @Test
-    public void contarSeguidores_y_esSeguidor() {
+    @DisplayName("Contar seguidores y es seguidor devuelve valor correcto")
+    public void contarSeguidoresYEsSeguidorDevuelveValorCorrecto() {
         Persona p1 = new Persona();
         Persona p2 = new Persona();
         Persona p3 = new Persona();
@@ -52,7 +56,8 @@ public class CinemaniacoTest {
     }
 
     @Test
-    public void amigosEnComun_funciona() {
+    @DisplayName("Amigos en común funciona devuelve valor correcto")
+    public void amigosEnComunFuncionaDevuelveValorCorrecto() {
         Persona p1 = new Persona();
         Persona p2 = new Persona();
         Persona p3 = new Persona();

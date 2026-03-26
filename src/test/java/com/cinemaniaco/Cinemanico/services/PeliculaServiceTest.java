@@ -72,7 +72,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("devuelve lista vacía si no hay películas")
-        void deberiaRetornarListaVacia() {
+        void listarTodasDevuelveListaVaciaDevuelveValorCorrecto() {
             when(peliculaRepository.findAll()).thenReturn(List.of());
 
             assertThat(service.listarTodas()).isEmpty();
@@ -80,7 +80,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("devuelve todas las películas mapeadas a DTO")
-        void deberiaRetornarTodasLasPeliculas() {
+        void listarTodasDevuelveTodasLasPeliculasDevuelveValorCorrecto() {
             when(peliculaRepository.findAll()).thenReturn(List.of(pelicula));
 
             List<PeliculaResponse> resultado = service.listarTodas();
@@ -98,7 +98,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza ResourceNotFoundException si no existe")
-        void deberiaLanzarExcepcionSiNoExiste() {
+        void buscarPorIdLanzaResourceNotFoundDevuelveValorCorrecto() {
             when(peliculaRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.buscarPorId(99L))
@@ -108,7 +108,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("retorna la película si existe")
-        void deberiaRetornarPeliculaExistente() {
+        void buscarPorIdRetornaPeliculaExistenteDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
             Pelicula resultado = service.buscarPorId(1L);
@@ -125,7 +125,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("crea y guarda la película correctamente")
-        void deberiaCrearPelicula() {
+        void crearCreaYPersistePeliculaDevuelveValorCorrecto() {
             PeliculaRequest request = new PeliculaRequest(
                     "Inception", "Christopher Nolan", 2010,
                     List.of("Leonardo DiCaprio"), List.of("Ciencia ficción")
@@ -147,7 +147,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("actualiza los campos y guarda")
-        void deberiaActualizarPelicula() {
+        void actualizarActualizaCamposYGuardaDevuelveValorCorrecto() {
             PeliculaRequest request = new PeliculaRequest(
                     "Inception 2", "Nolan", 2025,
                     List.of("Actor"), List.of("Acción")
@@ -164,7 +164,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza excepción si la película no existe")
-        void deberiaLanzarExcepcionSiNoExiste() {
+        void actualizarLanzaExcepcionSiNoExisteDevuelveValorCorrecto() {
             when(peliculaRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.actualizar(99L, new PeliculaRequest()))
@@ -180,7 +180,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("elimina si la película existe")
-        void deberiaEliminarSiExiste() {
+        void eliminarEliminaSiExisteDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
             service.eliminar(1L);
@@ -190,7 +190,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza excepción y no elimina si no existe")
-        void deberiaLanzarExcepcionSiNoExiste() {
+        void eliminarLanzaExcepcionSiNoExisteDevuelveValorCorrecto() {
             when(peliculaRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.eliminar(99L))
@@ -208,7 +208,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("agrega puntuación y devuelve el nuevo promedio")
-        void deberiaAgregarPuntuacion() {
+        void puntuarPeliculaAgregaPuntuacionDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
             when(peliculaRepository.save(any())).thenReturn(pelicula);
@@ -220,7 +220,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("actualiza puntuación existente del mismo cinemaniaco")
-        void deberiaActualizarPuntuacionExistente() {
+        void puntuarPeliculaActualizaPuntuacionExistenteDevuelveValorCorrecto() {
             pelicula.anadirPuntuacion(cinemaniaco, 6.0);
 
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
@@ -235,7 +235,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza ResourceNotFoundException si la película no existe")
-        void deberiaLanzarExcepcionSiPeliculaNoExiste() {
+        void puntuarPeliculaLanzaExcepcionSiPeliculaNoExisteDevuelveValorCorrecto() {
             when(peliculaRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.puntuarPelicula(99L, new PuntuacionRequest(1L, 7.0)))
@@ -251,7 +251,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("devuelve 0.0 si no hay puntuaciones")
-        void deberiaRetornarCeroSinPuntuaciones() {
+        void obtenerPromedioDevuelveCeroSinPuntuacionesDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
             assertThat(service.obtenerPromedio(1L)).isEqualTo(0.0);
@@ -259,11 +259,10 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("devuelve el promedio correcto con varias puntuaciones")
-        void deberiaCalcularPromedio() {
+        void obtenerPromedioDevuelvePromedioCorrectoDevuelveValorCorrecto() {
             Persona p2 = new Persona(2L, "Ana", 22, "García", "ana@mail.com");
             Cinemaniaco c2 = new Cinemaniaco(2L, p2, "anita", new ArrayList<>(),
                     new ArrayList<>(), new ArrayList<>());
-
             pelicula.anadirPuntuacion(cinemaniaco, 8.0);
             pelicula.anadirPuntuacion(c2, 6.0);
 
@@ -281,7 +280,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("agrega comentario y lo devuelve como DTO")
-        void deberiaAgregarComentario() {
+        void comentarPeliculaAgregaComentarioDevuelveValorCorrecto() {
             ComentarioRequest request = new ComentarioRequest(1L, "Excelente película");
 
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
@@ -298,7 +297,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza excepción si el cinemaniaco no existe")
-        void deberiaLanzarExcepcionSiCinemaniacoNoExiste() {
+        void comentarPeliculaLanzaExcepcionSiCinemaniacoNoExisteDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
             when(cinemaniacoRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -322,7 +321,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("incrementa el contador al dar me gusta")
-        void deberiaIncrementarMeGusta() {
+        void meGustaIncrementaContadorDevuelveValorCorrecto() {
             Persona p2 = new Persona(2L, "Ana", 22, "García", "ana@mail.com");
             Cinemaniaco c2 = new Cinemaniaco(2L, p2, "anita", new ArrayList<>(),
                     new ArrayList<>(), new ArrayList<>());
@@ -338,7 +337,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("no duplica me gusta si ya lo dio el mismo cinemaniaco")
-        void noDuplicaMeGusta() {
+        void meGustaNoDuplicaSiYaDioDevuelveValorCorrecto() {
             comentario.agregarMeGusta(cinemaniaco); // ya tiene 1
 
             when(comentarioRepository.findById(1L)).thenReturn(Optional.of(comentario));
@@ -352,7 +351,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("decrementa el contador al quitar me gusta")
-        void deberiaDecrementarMeGusta() {
+        void meGustaDecrementaContadorDevuelveValorCorrecto() {
             comentario.agregarMeGusta(cinemaniaco);
 
             when(comentarioRepository.findById(1L)).thenReturn(Optional.of(comentario));
@@ -366,7 +365,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("no hace nada si quita me gusta sin haberlo dado")
-        void noHaceNadaSiQuitaSinHaberDado() {
+        void meGustaNoHaceNadaSiQuitaSinHaberDadoDevuelveValorCorrecto() {
             Persona p2 = new Persona(2L, "Ana", 22, "García", "ana@mail.com");
             Cinemaniaco c2 = new Cinemaniaco(2L, p2, "anita", new ArrayList<>(),
                     new ArrayList<>(), new ArrayList<>());
@@ -389,7 +388,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza BusinessException si la película no tiene comentarios")
-        void deberiaLanzarExcepcionSinComentarios() {
+        void generarResumenIALanzaExcepcionSiNoTieneComentariosDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
             assertThatThrownBy(() -> service.generarResumenIA(1L))
@@ -400,7 +399,7 @@ class PeliculaServiceTest {
         @Test
         @DisplayName("llama a OpenAI, guarda y retorna el resumen")
         @SuppressWarnings("unchecked")
-        void deberiaGenerarYGuardarResumen() {
+        void generarResumenIALlamaOpenAISalvaYRetornaDevuelveValorCorrecto() {
             pelicula.anadirComentario(new Comentario(cinemaniaco, "Muy buena"));
             pelicula.anadirComentario(new Comentario(cinemaniaco, "Me encantó el final"));
 
@@ -425,7 +424,7 @@ class PeliculaServiceTest {
         @Test
         @DisplayName("lanza BusinessException si OpenAI devuelve respuesta vacía")
         @SuppressWarnings("unchecked")
-        void deberiaLanzarExcepcionSiOpenAIFalla() {
+        void generarResumenIALanzaExcepcionSiOpenAIFallaDevuelveValorCorrecto() {
             pelicula.anadirComentario(new Comentario(cinemaniaco, "Comentario"));
 
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
@@ -445,7 +444,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("retorna el resumen si ya fue generado")
-        void deberiaRetornarResumenExistente() {
+        void obtenerResumenIARetornaResumenPreexistenteDevuelveValorCorrecto() {
             pelicula.setResumenIA("Resumen previo");
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
@@ -456,7 +455,7 @@ class PeliculaServiceTest {
 
         @Test
         @DisplayName("lanza BusinessException si no se generó resumen aún")
-        void deberiaLanzarExcepcionSiNoHayResumen() {
+        void obtenerResumenIALanzaExcepcionSiNoHayResumenDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
             assertThatThrownBy(() -> service.obtenerResumenIA(1L))
