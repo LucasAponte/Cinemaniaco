@@ -34,7 +34,7 @@ public class PeliculaService {
     private final ComentarioRepository comentarioRepository;
     private final RestTemplate restTemplate;
 
-    @Value("${openai.api.key}")
+    @Value("${openai.api.key:}")
     private String openAiApiKey;
 
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
@@ -151,27 +151,30 @@ public class PeliculaService {
     // ─── Resumen IA ─────────────────────────────────────────────────────────
 
     @Transactional
-    public String generarResumenIA(Long peliculaId) {
+    public String generarComentarioEnComunIA(Long peliculaId) {
         Pelicula pelicula = buscarPorId(peliculaId);
 
         List<String> textos = pelicula.getComentarios().stream()
                 .map(Comentario::getTexto)
                 .toList();
 
+        if (openAiApiKey == null || openAiApiKey.isBlank())
+            throw new BusinessException("La integración con OpenAI no está configurada en este entorno");
+
         if (textos.isEmpty())
             throw new BusinessException("La película no tiene comentarios aún para generar un resumen");
 
         String resumen = llamarOpenAI(construirPrompt(pelicula.getTitulo(), textos));
-        pelicula.setResumenIA(resumen);
+        pelicula.setComentarioEnComunIA(resumen);
         peliculaRepository.save(pelicula);
         return resumen;
     }
 
-    public String obtenerResumenIA(Long peliculaId) {
+    public String obtenerComentarioEnComunIa(Long peliculaId) {
         Pelicula pelicula = buscarPorId(peliculaId);
-        if (pelicula.getResumenIA() == null)
+        if (pelicula.getComentarioEnComunIA() == null)
             throw new BusinessException("Todavía no se generó un resumen para esta película");
-        return pelicula.getResumenIA();
+        return pelicula.getComentarioEnComunIA();
     }
 
     // ─── Auxiliares internos ────────────────────────────────────────────────
@@ -199,7 +202,6 @@ public class PeliculaService {
         comentarios.forEach(c -> sb.append("- ").append(c).append("\n"));
         return sb.toString();
     }
-    //TODO Ver de hacer una clase para todo lo que es IA
 
     @SuppressWarnings("unchecked")
     private String llamarOpenAI(String prompt) {

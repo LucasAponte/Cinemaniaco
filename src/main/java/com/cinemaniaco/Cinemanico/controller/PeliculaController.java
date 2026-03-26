@@ -118,7 +118,7 @@ public class PeliculaController {
     //TODO hacer otra entidad que sea OpenIAClientee que se encargue de eso y no mezclarlo con el servicio de Pelicula.
     @PostMapping("/{id}/resumen-ia")
     public ResponseEntity<String> generarResumenIA(@PathVariable Long id) {
-        return ResponseEntity.ok(peliculaService.generarResumenIA(id));
+        return ResponseEntity.ok(peliculaService.generarComentarioEnComunIA(id));
     }
     /**
      * GET /api/peliculas/{id}/resumen-ia
@@ -126,6 +126,6 @@ public class PeliculaController {
      */
     @GetMapping("/{id}/resumen-ia")
     public ResponseEntity<String> obtenerResumenIA(@PathVariable Long id) {
-        return ResponseEntity.ok(peliculaService.obtenerResumenIA(id));
+        return ResponseEntity.ok(peliculaService.obtenerComentarioEnComunIa(id));
     }
 }

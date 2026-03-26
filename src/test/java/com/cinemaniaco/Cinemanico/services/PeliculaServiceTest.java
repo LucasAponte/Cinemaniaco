@@ -391,7 +391,7 @@ class PeliculaServiceTest {
         void generarResumenIALanzaExcepcionSiNoTieneComentariosDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
-            assertThatThrownBy(() -> service.generarResumenIA(1L))
+            assertThatThrownBy(() -> service.generarComentarioEnComunIA(1L))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("comentarios");
         }
@@ -414,10 +414,10 @@ class PeliculaServiceTest {
                     .thenReturn(new ResponseEntity<>(openAiResponse, HttpStatus.OK));
             when(peliculaRepository.save(any())).thenReturn(pelicula);
 
-            String resultado = service.generarResumenIA(1L);
+            String resultado = service.generarComentarioEnComunIA(1L);
 
             assertThat(resultado).isEqualTo("Resumen generado por IA");
-            assertThat(pelicula.getResumenIA()).isEqualTo("Resumen generado por IA");
+            assertThat(pelicula.getComentarioEnComunIA()).isEqualTo("Resumen generado por IA");
             verify(peliculaRepository).save(pelicula);
         }
 
@@ -431,7 +431,7 @@ class PeliculaServiceTest {
             when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(), eq(Map.class)))
                     .thenReturn(ResponseEntity.ok((Map) null));
 
-            assertThatThrownBy(() -> service.generarResumenIA(1L))
+            assertThatThrownBy(() -> service.generarComentarioEnComunIA(1L))
                     .isInstanceOf(BusinessException.class);
         }
     }
@@ -445,10 +445,10 @@ class PeliculaServiceTest {
         @Test
         @DisplayName("retorna el resumen si ya fue generado")
         void obtenerResumenIARetornaResumenPreexistenteDevuelveValorCorrecto() {
-            pelicula.setResumenIA("Resumen previo");
+            pelicula.setComentarioEnComunIA("Resumen previo");
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
-            String resultado = service.obtenerResumenIA(1L);
+            String resultado = service.obtenerComentarioEnComunIa(1L);
 
             assertThat(resultado).isEqualTo("Resumen previo");
         }
@@ -458,7 +458,7 @@ class PeliculaServiceTest {
         void obtenerResumenIALanzaExcepcionSiNoHayResumenDevuelveValorCorrecto() {
             when(peliculaRepository.findById(1L)).thenReturn(Optional.of(pelicula));
 
-            assertThatThrownBy(() -> service.obtenerResumenIA(1L))
+            assertThatThrownBy(() -> service.obtenerComentarioEnComunIa(1L))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("resumen");
         }
