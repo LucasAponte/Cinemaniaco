@@ -1,6 +1,7 @@
 package com.cinemaniaco.Cinemanico.domain;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.util.List;
 
@@ -12,7 +13,8 @@ public class PuntuacionTest {
     Cinemaniaco cinemaniaco = new Cinemaniaco( persona,"leito");
 
     @Test
-    public void crearPuntuacionConCinemaniacoYPelicula(){
+    @DisplayName("Crear puntuación con cinemaniaco y película devuelve valor correcto")
+    public void crearPuntuacionConCinemaniacoYPeliculaDevuelveValorCorrecto(){
         double puntuacion = 4.5;
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion);
         assertEquals(1,pelicula.cantPuntuaciones());
@@ -20,7 +22,8 @@ public class PuntuacionTest {
         assertEquals(cinemaniaco, pelicula.getPuntuaciones().get(0).getCinemaniaco());
     }
     @Test
-    public void evitarPuntuacionNegativa(){
+    @DisplayName("Evitar puntuación negativa devuelve valor correcto")
+    public void evitarPuntuacionNegativaDevuelveValorCorrecto(){
         double puntuacionNegativa = -3.0;
         pelicula.anadirPuntuacion(cinemaniaco,puntuacionNegativa);
         assertEquals(1,pelicula.cantPuntuaciones());
@@ -28,9 +31,10 @@ public class PuntuacionTest {
     }
 
     @Test
+    @DisplayName("Evitar puntuaciones dobles del mismo cinemaniaco devuelve valor correcto")
     //Si bien marco que no se pueda subir doble puntuacion, si debería poder dejar modificar una puntuacion ya existente...
     //puestoe es distinto subir otra puntuacion que modificar otra
-    public void evitarPuntuacionesDoblesMismoCinemaniaco(){
+    public void evitarPuntuacionesDoblesMismoCinemaniacoDevuelveValorCorrecto(){
         double puntuacion1 = 4.5;
         double puntuacion2 = 3.0;
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion1);
@@ -41,7 +45,8 @@ public class PuntuacionTest {
     }
 
     @Test
-    public void modificarPuntuacionExistente(){
+    @DisplayName("Modificar puntuación existente devuelve valor correcto")
+    public void modificarPuntuacionExistenteDevuelveValorCorrecto(){
         double puntuacion1 = 4.5;
         double puntuacion2 = 3.0;
         pelicula.anadirPuntuacion(cinemaniaco,puntuacion1);
@@ -51,7 +56,8 @@ public class PuntuacionTest {
     }
 
     @Test
-    public void muchasPuntuacionesYCalcularPromedio(){
+    @DisplayName("Muchas puntuaciones y calcular promedio devuelve valor correcto")
+    public void muchasPuntuacionesYCalcularPromedioDevuelveValorCorrecto(){
         Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
         Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito3");
         double puntuacion1 = 4.5;

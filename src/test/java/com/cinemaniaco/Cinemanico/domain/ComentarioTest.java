@@ -1,6 +1,7 @@
 package com.cinemaniaco.Cinemanico.domain;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.util.List;
 
@@ -11,7 +12,8 @@ public class ComentarioTest {
 
 
     @Test
-    public void testCreacionComentarioEnPelicula() {
+    @DisplayName("Creación de comentario en película devuelve valor correcto")
+    public void creacionComentarioEnPeliculaDevuelveValorCorrecto() {
         // Crear una instancia de Comentario
         Comentario comentario = new Comentario(cinemaniaco, "¡Me encantó esta película!");
         // Verificar que los atributos se asignaron correctamente
@@ -21,21 +23,23 @@ public class ComentarioTest {
         assert pelicula.getComentarios().contains(comentario);
         assert pelicula.buscarComentarioDe(cinemaniaco).equals(comentario);
     }
+        @Test
+        @DisplayName("Agregar subcomentarios devuelve valor correcto")
+        public void agregarSubComentariosDevuelveValorCorrecto() {
+            Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
+            Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito3");
+            Comentario comentarioPrincipal = new Comentario(cinemaniaco, "¡Me encantó esta película!");
+            Comentario comentarioSecundario = new Comentario(cinemaniaco2, "Le doy un 13/10");
+            Comentario comentarioSecundario2 = new Comentario(cinemaniaco3, "Totalmente de acuerdo!");
+            comentarioPrincipal.agregarComentario(comentarioSecundario);
+            comentarioPrincipal.agregarComentario(comentarioSecundario2);
+            assert comentarioPrincipal.buscarSubComentarioDe(cinemaniaco2).equals(comentarioSecundario);
+            assert comentarioPrincipal.buscarSubComentarioDe(cinemaniaco3).equals(comentarioSecundario2);
+            assert comentarioPrincipal.cantidadSubComentarios() == 2;
+        }
     @Test
-    public void testPonerComentariosEnUnComentario() {
-        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
-        Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito3");
-        Comentario comentarioPrincipal = new Comentario(cinemaniaco, "¡Me encantó esta película!");
-        Comentario comentarioSecundario = new Comentario(cinemaniaco2, "Le doy un 13/10");
-        Comentario comentarioSecundario2 = new Comentario(cinemaniaco3, "Totalmente de acuerdo!");
-        comentarioPrincipal.agregarComentario(comentarioSecundario);
-        comentarioPrincipal.agregarComentario(comentarioSecundario2);
-        assert comentarioPrincipal.buscarSubComentarioDe(cinemaniaco2).equals(comentarioSecundario);
-        assert comentarioPrincipal.buscarSubComentarioDe(cinemaniaco3).equals(comentarioSecundario2);
-        assert comentarioPrincipal.cantidadSubComentarios() == 2;
-    }
-    @Test
-    public void agregarMeGustaAComentario() {
+    @DisplayName("Agregar me gusta a comentario devuelve valor correcto")
+    public void agregarMeGustaAComentarioDevuelveValorCorrecto() {
         Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
         Comentario comentario = new Comentario(cinemaniaco, "¡Me encantó esta película!");
         comentario.agregarMeGusta(cinemaniaco);
@@ -49,7 +53,8 @@ public class ComentarioTest {
         assert comentario.tieneMeGustaDe(cinemaniaco2);
     }
     @Test
-    public void quitarMeGustaDeComentario() {
+    @DisplayName("Quitar me gusta de comentario devuelve valor correcto")
+    public void quitarMeGustaDeComentarioDevuelveValorCorrecto() {
         Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
         Comentario comentario = new Comentario(cinemaniaco, "¡Me encantó esta película!");
         comentario.agregarMeGusta(cinemaniaco);
@@ -57,7 +62,6 @@ public class ComentarioTest {
         assert comentario.getMeGusta() == 2;
         // Simular quitar un "Me gusta"
         comentario.quitarMeGustaDe(cinemaniaco);
-        comentario.setMeGusta(comentario.getMeGusta() - 1);
         assert comentario.getMeGusta() == 1;
         assert !comentario.tieneMeGustaDe(cinemaniaco);
     }

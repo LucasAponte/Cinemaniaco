@@ -55,7 +55,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("devuelve lista vacía cuando no hay cinemaniacos")
-        void deberiaRetornarListaVacia() {
+        void listarTodosDevuelveListaVaciaDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findAll()).thenReturn(List.of());
 
             List<CinemaniacoResponse> resultado = service.listarTodos();
@@ -65,7 +65,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("devuelve todos los cinemaniacos mapeados a DTO")
-        void deberiaRetornarTodosLosCinemaniacos() {
+        void listarTodosDevuelveTodosLosCinemaniacosDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findAll()).thenReturn(List.of(cinemaniaco));
 
             List<CinemaniacoResponse> resultado = service.listarTodos();
@@ -83,7 +83,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("lanza ResourceNotFoundException si no existe")
-        void deberiaLanzarExcepcionSiNoExiste() {
+        void buscarPorIdLanzaExcepcionDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.buscarPorId(99L))
@@ -93,7 +93,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("retorna el cinemaniaco si existe")
-        void deberiaRetornarCinemaniacoExistente() {
+        void buscarPorIdRetornaCinemaniacoDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
 
             Cinemaniaco resultado = service.buscarPorId(1L);
@@ -103,14 +103,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── buscarPorApodo ──────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("buscarPorApodo")
     class BuscarPorApodo {
 
         @Test
         @DisplayName("lanza ResourceNotFoundException si el apodo no existe")
-        void deberiaLanzarExcepcionSiApodoNoExiste() {
+        void buscarPorApodoLanzaExcepcionDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findByApodo("fantasma")).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.buscarPorApodo("fantasma"))
@@ -120,7 +119,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("retorna el cinemaniaco si el apodo existe")
-        void deberiaRetornarCinemaniacoPorApodo() {
+        void buscarPorApodoRetornaCinemaniacoDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findByApodo("juancho")).thenReturn(Optional.of(cinemaniaco));
 
             Cinemaniaco resultado = service.buscarPorApodo("juancho");
@@ -130,14 +129,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── registrar ───────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("registrar")
     class Registrar {
 
         @Test
         @DisplayName("guarda persona y cinemaniaco y devuelve el DTO")
-        void deberiaRegistrarCorrectamente() {
+        void registrarGuardaPersonaYCinemaniacoDevuelveValorCorrecto() {
             CinemaniacoRequest request = new CinemaniacoRequest(
                     new PersonaRequest("Juan", "Pérez", 25, "juan@mail.com"),
                     "juancho"
@@ -155,14 +153,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── actualizarApodo ─────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("actualizarApodo")
     class ActualizarApodo {
 
         @Test
         @DisplayName("actualiza el apodo y guarda")
-        void deberiaActualizarApodo() {
+        void actualizarApodoActualizaYGuardaDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
             when(cinemaniacoRepository.save(any())).thenReturn(cinemaniaco);
 
@@ -174,7 +171,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("lanza excepción si no existe el cinemaniaco")
-        void deberiaLanzarExcepcionSiNoExiste() {
+        void actualizarApodoLanzaExcepcionSiNoExisteDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.actualizarApodo(99L, "nuevo"))
@@ -183,14 +180,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── eliminar ────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("eliminar")
     class Eliminar {
 
         @Test
         @DisplayName("elimina si el cinemaniaco existe")
-        void deberiaEliminarSiExiste() {
+        void eliminarEliminaSiExisteDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
 
             service.eliminar(1L);
@@ -200,7 +196,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("lanza excepción si no existe")
-        void deberiaLanzarExcepcionSiNoExiste() {
+        void eliminarLanzaExcepcionSiNoExisteDevuelveValorCorrecto() {
             when(cinemaniacoRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.eliminar(99L))
@@ -211,14 +207,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── seguir ──────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("seguir")
     class Seguir {
 
         @Test
         @DisplayName("lanza BusinessException si intenta seguirse a sí mismo")
-        void deberiaLanzarExcepcionSiSeSigueSiMismo() {
+        void seguirLanzaBusinessExceptionSiSeSigueSiMismoDevuelveValorCorrecto() {
             assertThatThrownBy(() -> service.seguir(1L, 1L))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("sí mismo");
@@ -226,7 +221,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("retorna true y guarda ambos cuando el seguimiento es exitoso")
-        void deberiaRetornarTrueYGuardarAmbosSiExitoso() {
+        void seguirRetornaTrueYGuardaAmbosDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
                     new java.util.ArrayList<>(), new java.util.ArrayList<>());
 
@@ -242,7 +237,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("retorna false y no guarda si ya lo seguía")
-        void deberiaRetornarFalseSiYaLoSeguia() {
+        void seguirRetornaFalseSiYaLoSeguiaDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
                     new java.util.ArrayList<>(), new java.util.ArrayList<>());
             cinemaniaco.getSeguidos().add(seguido); // ya lo sigue
@@ -258,14 +253,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── dejarDeSeguir ───────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("dejarDeSeguir")
     class DejarDeSeguir {
 
         @Test
         @DisplayName("retorna true si dejó de seguir exitosamente")
-        void deberiaRetornarTrueSiDejoDeseguir() {
+        void dejarDeSeguirRetornaTrueSiDejoDeSeguirDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
                     new java.util.ArrayList<>(), new java.util.ArrayList<>());
             cinemaniaco.getSeguidos().add(seguido);
@@ -281,7 +275,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("retorna false si no lo seguía")
-        void deberiaRetornarFalseSiNoLoSeguia() {
+        void dejarDeSeguirRetornaFalseSiNoLoSeguiaDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
                     new java.util.ArrayList<>(), new java.util.ArrayList<>());
 
@@ -296,14 +290,13 @@ class CinemaniacoServiceTest {
     }
 
     // ─── amigosEnComun ───────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("amigosEnComun")
     class AmigosEnComun {
 
         @Test
         @DisplayName("retorna la intersección de seguidos entre dos cinemaniacos")
-        void deberiaRetornarAmigosEnComun() {
+        void amigosEnComunRetornaInterseccionDevuelveValorCorrecto() {
             Cinemaniaco enComun = new Cinemaniaco(3L, persona, "encomun", new java.util.ArrayList<>(),
                     new java.util.ArrayList<>(), new java.util.ArrayList<>());
             Cinemaniaco otro = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
@@ -323,7 +316,7 @@ class CinemaniacoServiceTest {
 
         @Test
         @DisplayName("retorna lista vacía si no hay seguidos en común")
-        void deberiaRetornarVacioSinComunes() {
+        void amigosEnComunRetornaVacioDevuelveValorCorrecto() {
             Cinemaniaco otro = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
                     new java.util.ArrayList<>(), new java.util.ArrayList<>());
 
