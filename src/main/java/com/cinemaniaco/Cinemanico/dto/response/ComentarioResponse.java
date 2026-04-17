@@ -19,17 +19,20 @@ public class ComentarioResponse {
     private List<ComentarioResponse> subComentarios;
 
     public static ComentarioResponse from(Comentario c) {
+        return from(c, 0);
+    }
+
+    private static ComentarioResponse from(Comentario c, int depth) {
         if (c == null) return null;
+        int maxDepth = 2; // Limitar la profundidad de los subcomentarios
         return new ComentarioResponse(
                 c.getId_Comentario(),
                 c.getTexto(),
                 c.getMeGusta(),
-                //No debería poder ser Null, pero por las dudas lo manejo
                 c.getCinemaniaco() != null ? c.getCinemaniaco().getApodo() : null,
                 c.cantidadSubComentarios(),
-                //TODO: Esto puede generar un ciclo infinito si hay subcomentarios que a su vez tienen subcomentarios?
-                c.getSubComentarios() != null
-                        ? c.getSubComentarios().stream().map(ComentarioResponse::from).toList()
+                (depth < maxDepth && c.getSubComentarios() != null)
+                        ? c.getSubComentarios().stream().map(sub -> from(sub, depth + 1)).toList()
                         : List.of()
         );
     }

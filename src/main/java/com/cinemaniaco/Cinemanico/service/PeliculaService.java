@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -99,6 +100,8 @@ public class PeliculaService {
         Pelicula pelicula       = buscarPorId(peliculaId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
         Puntuacion puntuacion   = pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco);
+        if (puntuacion == null)
+            throw new ResourceNotFoundException("El cinemaniaco aún no puntuó esta película");
         return PuntuacionResponse.from(puntuacion);
     }
 
@@ -226,8 +229,16 @@ public class PeliculaService {
             List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
             return (String) message.get("content");
+        } catch (HttpClientErrorException e) {
+            String msg = switch (e.getStatusCode().value()) {
+                case 401 -> "API key de OpenAI inválida o no autorizada";
+                case 429 -> "Se superó el límite de solicitudes de OpenAI";
+                case 400 -> "Solicitud malformada enviada a OpenAI";
+                default  -> "Error del cliente al llamar a OpenAI: " + e.getStatusCode();
+            };
+            throw new BusinessException(msg);
         } catch (Exception e) {
-            throw new BusinessException("Error al comunicarse con OpenAI: " + e.getMessage());
+            throw new BusinessException("Error inesperado al comunicarse con OpenAI: " + e.getMessage());
         }
     }
 }

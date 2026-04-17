@@ -70,9 +70,7 @@ public class PeliculaController {
     public ResponseEntity<PuntuacionResponse> obtenerPuntuacionDe(
             @PathVariable Long id,
             @PathVariable Long cinemaniacoId) {
-        PuntuacionResponse puntuacion = peliculaService.obtenerPuntuacionDe(id, cinemaniacoId);
-        if (puntuacion == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(puntuacion);
+        return ResponseEntity.ok(peliculaService.obtenerPuntuacionDe(id, cinemaniacoId));
     }
 
     // ─── Comentarios ────────────────────────────────────────────────────────
