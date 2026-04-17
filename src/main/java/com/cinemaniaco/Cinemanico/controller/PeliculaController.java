@@ -82,8 +82,9 @@ public class PeliculaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(peliculaService.comentarPelicula(id, request));
     }
 
-    @PostMapping("/comentarios/{comentarioId}/respuestas")
+    @PostMapping("/{id}/comentarios/{comentarioId}/respuestas")
     public ResponseEntity<ComentarioResponse> responder(
+            @PathVariable Long id,
             @PathVariable Long comentarioId,
             @Valid @RequestBody ComentarioRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -92,15 +93,17 @@ public class PeliculaController {
 
     // ─── Me Gusta ───────────────────────────────────────────────────────────
 
-    @PostMapping("/comentarios/{comentarioId}/megusta")
+    @PostMapping("/{id}/comentarios/{comentarioId}/megusta")
     public ResponseEntity<Integer> darMeGusta(
+            @PathVariable Long id,
             @PathVariable Long comentarioId,
             @RequestParam Long cinemaniacoId) {
         return ResponseEntity.ok(peliculaService.darMeGusta(comentarioId, cinemaniacoId));
     }
 
-    @DeleteMapping("/comentarios/{comentarioId}/megusta")
+    @DeleteMapping("/{id}/comentarios/{comentarioId}/megusta")
     public ResponseEntity<Integer> quitarMeGusta(
+            @PathVariable Long id,
             @PathVariable Long comentarioId,
             @RequestParam Long cinemaniacoId) {
         return ResponseEntity.ok(peliculaService.quitarMeGusta(comentarioId, cinemaniacoId));
