@@ -16,7 +16,7 @@ public class Puntuacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(targetEntity = Cinemaniaco.class, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "cinemaniaco_id")
     private Cinemaniaco cinemaniaco;
     private double puntuacion;

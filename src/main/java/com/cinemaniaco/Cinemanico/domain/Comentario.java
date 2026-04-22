@@ -21,8 +21,6 @@ public class Comentario {
     @JoinColumn(name = "cinemaniaco_id")
     private Cinemaniaco cinemaniaco;
 
-    private int meGusta = 0;
-
     @ManyToMany
     @JoinTable(
             name = "comentario_me_gusta",
@@ -60,7 +58,6 @@ public class Comentario {
     public void agregarMeGusta(Cinemaniaco cinemaniaco) {
         if (!this.meGustaCinemaniacos.contains(cinemaniaco)) {
             this.meGustaCinemaniacos.add(cinemaniaco);
-            this.meGusta++;
         }
     }
 
@@ -71,7 +68,10 @@ public class Comentario {
     public void quitarMeGustaDe(Cinemaniaco cinemaniaco) {
         if (tieneMeGustaDe(cinemaniaco)) {
             this.meGustaCinemaniacos.remove(cinemaniaco);
-            this.meGusta--;
         }
     }
+    public int getMeGusta() {
+        return meGustaCinemaniacos != null ? meGustaCinemaniacos.size() : 0;
+    }
+
 }

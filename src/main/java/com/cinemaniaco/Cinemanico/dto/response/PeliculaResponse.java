@@ -36,7 +36,7 @@ public class PeliculaResponse {
                 p.getComentarios() != null
                         ? p.getComentarios().stream().map(ComentarioResponse::from).toList()
                         : List.of(),
-                p.getComentarioEnComunIA()
+                p.getComentarioComunidadIA()
         );
     }
 }

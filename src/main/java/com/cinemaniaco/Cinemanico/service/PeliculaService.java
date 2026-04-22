@@ -168,16 +168,16 @@ public class PeliculaService {
             throw new BusinessException("La integración con OpenAI no está configurada en este entorno");
 
         String resumen = llamarOpenAI(construirPrompt(pelicula.getTitulo(), textos));
-        pelicula.setComentarioEnComunIA(resumen);
+        pelicula.setComentarioComunidadIA(resumen);
         peliculaRepository.save(pelicula);
         return resumen;
     }
 
     public String obtenerComentarioEnComunIa(Long peliculaId) {
         Pelicula pelicula = buscarPorId(peliculaId);
-        if (pelicula.getComentarioEnComunIA() == null)
+        if (pelicula.getComentarioComunidadIA() == null)
             throw new BusinessException("Todavía no se generó un resumen para esta película");
-        return pelicula.getComentarioEnComunIA();
+        return pelicula.getComentarioComunidadIA();
     }
 
     // ─── Auxiliares internos ────────────────────────────────────────────────

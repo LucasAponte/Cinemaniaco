@@ -22,16 +22,16 @@ public class Persona {
     @Column(name="email" ,unique = true, nullable = false)
     private String email;
 
-    public Persona(String nombre, int edad, String apellido) {
+    public Persona(String nombre, String apellido, int edad ) {
         this.nombre = nombre;
-        this.edad = edad;
         this.apellido = apellido;
+        this.edad = edad;
     }
 
-    public Persona(int edad, String nombre, String apellido, String email) {
-        this.edad = edad;
+    public Persona(String nombre, String apellido, int edad, String email) {
         this.nombre = nombre;
         this.apellido = apellido;
+        this.edad = edad;
         this.email = email;
     }
 }

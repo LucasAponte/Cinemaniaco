@@ -27,8 +27,9 @@ public class Cinemaniaco {
     @Column(unique = true, nullable = false)
     private String apodo;
 
-    @OneToMany
-    private List<Pelicula> peliculas = new ArrayList<>();
+    //Proxima implementacion
+    //@OneToMany
+    //private List<Pelicula> peliculas = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
