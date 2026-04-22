@@ -3,7 +3,7 @@
 API REST para una red social de cinéfilos, desarrollada con **Spring Boot** y **Java**.
 Los usuarios pueden registrarse, seguirse entre sí, puntuar y comentar películas, y obtener un resumen generado por IA a partir de los comentarios de la comunidad.
 
-> 🚀 **Deploy:** [cinemaniaco.onrender.com](https://cinemaniaco.onrender.com) ← reemplazá con tu URL real
+> 🚀 **Deploy:** https://cinemaniaco.onrender.com/
 
 ---
 
