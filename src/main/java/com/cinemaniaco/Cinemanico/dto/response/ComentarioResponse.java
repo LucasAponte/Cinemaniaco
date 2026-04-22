@@ -26,7 +26,7 @@ public class ComentarioResponse {
         if (c == null) return null;
         int maxDepth = 2; // Limitar la profundidad de los subcomentarios
         return new ComentarioResponse(
-                c.getId_Comentario(),
+                c.getId(),
                 c.getTexto(),
                 c.getMeGusta(),
                 c.getCinemaniaco() != null ? c.getCinemaniaco().getApodo() : null,

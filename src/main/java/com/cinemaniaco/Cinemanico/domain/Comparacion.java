@@ -14,7 +14,7 @@ public class Comparacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Comparacion;
+    private Long id;
 
     @ManyToMany
     @JoinTable(

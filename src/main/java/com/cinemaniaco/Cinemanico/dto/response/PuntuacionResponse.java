@@ -16,7 +16,7 @@ public class PuntuacionResponse {
     public static PuntuacionResponse from(Puntuacion p) {
         if (p == null) return null;
         return new PuntuacionResponse(
-                p.getId_Puntuacion(),
+                p.getId(),
                 p.getPuntuacion(),
                 p.getCinemaniaco() != null ? p.getCinemaniaco().getApodo() : null
         );

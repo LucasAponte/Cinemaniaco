@@ -19,11 +19,12 @@ public class Cinemaniaco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id_Cinemaniaco;
+    private Long id;
 
     @OneToOne
     private Persona persona;
     @EqualsAndHashCode.Include
+    @Column(unique = true, nullable = false)
     private String apodo;
 
     @OneToMany

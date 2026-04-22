@@ -55,7 +55,7 @@ public class PeliculaController {
     // ─── Puntuaciones ───────────────────────────────────────────────────────
 
     @PostMapping("/{id}/puntuaciones")
-    public ResponseEntity<Double> puntuar(
+    public ResponseEntity<PeliculaResponse> puntuar(
             @PathVariable Long id,
             @Valid @RequestBody PuntuacionRequest request) {
         return ResponseEntity.ok(peliculaService.puntuarPelicula(id, request));
@@ -94,7 +94,7 @@ public class PeliculaController {
     // ─── Me Gusta ───────────────────────────────────────────────────────────
 
     @PostMapping("/{id}/comentarios/{comentarioId}/megusta")
-    public ResponseEntity<Integer> darMeGusta(
+    public ResponseEntity<ComentarioResponse> darMeGusta(
             @PathVariable Long id,
             @PathVariable Long comentarioId,
             @RequestParam Long cinemaniacoId) {

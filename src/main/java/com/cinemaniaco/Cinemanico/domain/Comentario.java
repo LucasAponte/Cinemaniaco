@@ -15,7 +15,7 @@ public class Comentario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Comentario;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "cinemaniaco_id")

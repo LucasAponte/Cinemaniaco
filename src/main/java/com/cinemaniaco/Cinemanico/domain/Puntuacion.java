@@ -15,7 +15,7 @@ import lombok.Setter;
 public class Puntuacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Puntuacion;
+    private Long id;
     @ManyToOne(targetEntity = Cinemaniaco.class, optional = false)
     @JoinColumn(name = "cinemaniaco_id")
     private Cinemaniaco cinemaniaco;

@@ -38,6 +38,9 @@ public class CinemaniacoService {
 
     @Transactional
     public CinemaniacoResponse registrar(CinemaniacoRequest request) {
+
+        validarUnicidad(request);
+
         Persona persona = new Persona(
                 request.getPersona().getEdad(),
                 request.getPersona().getNombre(),
@@ -47,6 +50,20 @@ public class CinemaniacoService {
         Persona personaGuardada = personaRepository.save(persona);
         Cinemaniaco cinemaniaco = new Cinemaniaco(personaGuardada, request.getApodo());
         return CinemaniacoResponse.from(cinemaniacoRepository.save(cinemaniaco));
+    }
+    private void validarUnicidad(CinemaniacoRequest request) {
+
+        String email = request.getPersona().getEmail();
+        String apodo = request.getApodo();
+        System.out.println(email +"  " +apodo);
+        System.out.println(personaRepository.existsByEmail(email));
+        if (personaRepository.existsByEmail(email)) {
+            throw new BusinessException("Ya existe una persona con el email: " + email);
+        }
+        System.out.println(cinemaniacoRepository.existsByApodo(apodo));
+        if (cinemaniacoRepository.existsByApodo(apodo)) {
+            throw new BusinessException("El apodo ya está en uso: " + apodo);
+        }
     }
 
     @Transactional

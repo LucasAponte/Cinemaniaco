@@ -83,13 +83,13 @@ public class PeliculaService {
     // ─── Puntuaciones ───────────────────────────────────────────────────────
 
     @Transactional
-    public double puntuarPelicula(Long peliculaId, PuntuacionRequest request) {
+    public PeliculaResponse puntuarPelicula(Long peliculaId, PuntuacionRequest request) {
         Pelicula pelicula     = buscarPorId(peliculaId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(request.getCinemaniacoId());
 
         pelicula.anadirPuntuacion(cinemaniaco, request.getPuntos());
         peliculaRepository.save(pelicula);
-        return pelicula.calcularPuntuacionPromedio();
+        return PeliculaResponse.from(pelicula);
     }
 
     public double obtenerPromedio(Long peliculaId) {
@@ -132,13 +132,14 @@ public class PeliculaService {
     }
 
     @Transactional
-    public int darMeGusta(Long comentarioId, Long cinemaniacoId) {
+    public ComentarioResponse darMeGusta(Long comentarioId, Long cinemaniacoId) {
         Comentario comentario   = buscarComentario(comentarioId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
 
         comentario.agregarMeGusta(cinemaniaco);
         comentarioRepository.save(comentario);
-        return comentario.getMeGusta();
+        comentario.getMeGusta();
+        return ComentarioResponse.from(comentario);
     }
 
     @Transactional
@@ -161,11 +162,11 @@ public class PeliculaService {
                 .map(Comentario::getTexto)
                 .toList();
 
-        if (openAiApiKey == null || openAiApiKey.isBlank())
-            throw new BusinessException("La integración con OpenAI no está configurada en este entorno");
-
         if (textos.isEmpty())
             throw new BusinessException("La película no tiene comentarios aún para generar un resumen");
+
+        if (openAiApiKey == null || openAiApiKey.isBlank())
+            throw new BusinessException("La integración con OpenAI no está configurada en este entorno");
 
         String resumen = llamarOpenAI(construirPrompt(pelicula.getTitulo(), textos));
         pelicula.setComentarioEnComunIA(resumen);

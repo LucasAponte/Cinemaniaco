@@ -29,12 +29,23 @@ public class GlobalExceptionHandler {
 
     // ─── 400 — Regla de negocio violada ─────────────────────────────────────
 
-    @ExceptionHandler({BusinessException.class, IllegalArgumentException.class})
+    @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<ErrorResponse> handleBusiness(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage(),
+                        null
+                ));
+    }
+    // ─── 409 — conflicto datos existentes ─────────────────────────────────────
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(
+                        HttpStatus.CONFLICT.value(),
                         ex.getMessage(),
                         null
                 ));
