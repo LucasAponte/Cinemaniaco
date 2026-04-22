@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import java.util.List;
 
 public class ComentarioTest {
-    Persona persona = new Persona("Juan", 30, "Pérez");
+    Persona persona = new Persona("Juan", "Pérez", 30 );
     Cinemaniaco cinemaniaco = new Cinemaniaco(persona, "CineLover");
     Pelicula pelicula = new Pelicula("Inception", "Christopher Nolan", 2010, List.of("Leo"),List.of("drama") );
 
@@ -26,8 +26,8 @@ public class ComentarioTest {
         @Test
         @DisplayName("Agregar subcomentarios devuelve valor correcto")
         public void agregarSubComentariosDevuelveValorCorrecto() {
-            Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
-            Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito3");
+            Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo","Lopez",5),"leito2");
+            Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo","Lopez",5),"leito3");
             Comentario comentarioPrincipal = new Comentario(cinemaniaco, "¡Me encantó esta película!");
             Comentario comentarioSecundario = new Comentario(cinemaniaco2, "Le doy un 13/10");
             Comentario comentarioSecundario2 = new Comentario(cinemaniaco3, "Totalmente de acuerdo!");
@@ -40,7 +40,7 @@ public class ComentarioTest {
     @Test
     @DisplayName("Agregar me gusta a comentario devuelve valor correcto")
     public void agregarMeGustaAComentarioDevuelveValorCorrecto() {
-        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
+        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo","Lopez",5),"leito2");
         Comentario comentario = new Comentario(cinemaniaco, "¡Me encantó esta película!");
         comentario.agregarMeGusta(cinemaniaco);
         assert comentario.getMeGusta() == 1;
@@ -55,7 +55,7 @@ public class ComentarioTest {
     @Test
     @DisplayName("Quitar me gusta de comentario devuelve valor correcto")
     public void quitarMeGustaDeComentarioDevuelveValorCorrecto() {
-        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
+        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo","Lopez",5),"leito2");
         Comentario comentario = new Comentario(cinemaniaco, "¡Me encantó esta película!");
         comentario.agregarMeGusta(cinemaniaco);
         comentario.agregarMeGusta(cinemaniaco2);

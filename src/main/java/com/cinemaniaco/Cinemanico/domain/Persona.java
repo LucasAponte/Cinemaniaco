@@ -17,8 +17,8 @@ public class Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private int edad;
     private String apellido;
+    private int edad;
     @Column(name="email" ,unique = true, nullable = false)
     private String email;
 

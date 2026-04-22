@@ -8,7 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PuntuacionTest {
-    Persona persona = new Persona("Leo",5,"Lopez");
+    Persona persona = new Persona("Leo","Lopez",5);
     Pelicula pelicula = new Pelicula("Inception", "Christopher Nolan", 2010, List.of("Leo"),List.of("drama") );
     Cinemaniaco cinemaniaco = new Cinemaniaco( persona,"leito");
 
@@ -58,8 +58,8 @@ public class PuntuacionTest {
     @Test
     @DisplayName("Muchas puntuaciones y calcular promedio devuelve valor correcto")
     public void muchasPuntuacionesYCalcularPromedioDevuelveValorCorrecto(){
-        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito2");
-        Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo",5,"Lopez"),"leito3");
+        Cinemaniaco cinemaniaco2 = new Cinemaniaco( new Persona("Leo","Lopez",5),"leito2");
+        Cinemaniaco cinemaniaco3 = new Cinemaniaco( new Persona("Leo","Lopez",5),"leito3");
         double puntuacion1 = 4.5;
         double puntuacion2 = 3.5;
         double puntuacion3 = 2.5;

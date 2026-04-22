@@ -55,9 +55,9 @@ class PeliculaServiceTest {
 
     @BeforeEach
     void setUp() {
-        Persona persona = new Persona(1L, "Juan", 25, "Pérez", "juan@mail.com");
+        Persona persona = new Persona(1L, "Juan", "Pérez",25, "juan@mail.com");
         cinemaniaco = new Cinemaniaco(1L, persona, "juancho", new ArrayList<>(),
-                new ArrayList<>(), new ArrayList<>());
+                new ArrayList<>());
         pelicula = new Pelicula(
                 "Inception", "Christopher Nolan", 2010,
                 List.of("Leonardo DiCaprio"), List.of("Ciencia ficción")
@@ -260,9 +260,9 @@ class PeliculaServiceTest {
         @Test
         @DisplayName("devuelve el promedio correcto con varias puntuaciones")
         void obtenerPromedioDevuelvePromedioCorrectoDevuelveValorCorrecto() {
-            Persona p2 = new Persona(2L, "Ana", 22, "García", "ana@mail.com");
+            Persona p2 = new Persona(2L, "Ana", "García", 22, "ana@mail.com");
             Cinemaniaco c2 = new Cinemaniaco(2L, p2, "anita", new ArrayList<>(),
-                    new ArrayList<>(), new ArrayList<>());
+                    new ArrayList<>());
             pelicula.anadirPuntuacion(cinemaniaco, 8.0);
             pelicula.anadirPuntuacion(c2, 6.0);
 
@@ -322,9 +322,9 @@ class PeliculaServiceTest {
         @Test
         @DisplayName("incrementa el contador al dar me gusta")
         void meGustaIncrementaContadorDevuelveValorCorrecto() {
-            Persona p2 = new Persona(2L, "Ana", 22, "García", "ana@mail.com");
+            Persona p2 = new Persona(2L, "Ana", "García", 22, "ana@mail.com");
             Cinemaniaco c2 = new Cinemaniaco(2L, p2, "anita", new ArrayList<>(),
-                    new ArrayList<>(), new ArrayList<>());
+                    new ArrayList<>());
 
             when(comentarioRepository.findById(1L)).thenReturn(Optional.of(comentario));
             when(cinemaniacoRepository.findById(2L)).thenReturn(Optional.of(c2));
@@ -366,9 +366,9 @@ class PeliculaServiceTest {
         @Test
         @DisplayName("no hace nada si quita me gusta sin haberlo dado")
         void meGustaNoHaceNadaSiQuitaSinHaberDadoDevuelveValorCorrecto() {
-            Persona p2 = new Persona(2L, "Ana", 22, "García", "ana@mail.com");
+            Persona p2 = new Persona(2L, "Ana","García", 22, "ana@mail.com");
             Cinemaniaco c2 = new Cinemaniaco(2L, p2, "anita", new ArrayList<>(),
-                    new ArrayList<>(), new ArrayList<>());
+                    new ArrayList<>());
 
             when(comentarioRepository.findById(1L)).thenReturn(Optional.of(comentario));
             when(cinemaniacoRepository.findById(2L)).thenReturn(Optional.of(c2));
