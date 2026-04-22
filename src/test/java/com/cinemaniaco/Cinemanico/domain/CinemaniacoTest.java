@@ -12,7 +12,7 @@ public class CinemaniacoTest {
     public void seguirNoSePuedeSeguirASiMismoDevuelveFalse() {
         Persona p = new Persona();
         Cinemaniaco c = new Cinemaniaco(p, "uno");
-        c.setId_Cinemaniaco(1L);
+        c.setId(1L);
         assertFalse(c.seguir(c));
     }
 
@@ -23,8 +23,8 @@ public class CinemaniacoTest {
         Persona p2 = new Persona();
         Cinemaniaco c1 = new Cinemaniaco(p1, "uno");
         Cinemaniaco c2 = new Cinemaniaco(p2, "dos");
-        c1.setId_Cinemaniaco(1L);
-        c2.setId_Cinemaniaco(2L);
+        c1.setId(1L);
+        c2.setId(2L);
 
         assertTrue(c1.seguir(c2));
         assertTrue(c1.getSeguidos().contains(c2));
@@ -40,9 +40,9 @@ public class CinemaniacoTest {
         Cinemaniaco c1 = new Cinemaniaco(p1, "uno");
         Cinemaniaco c2 = new Cinemaniaco(p2, "dos");
         Cinemaniaco c3 = new Cinemaniaco(p3, "tres");
-        c1.setId_Cinemaniaco(1L);
-        c2.setId_Cinemaniaco(2L);
-        c3.setId_Cinemaniaco(3L);
+        c1.setId(1L);
+        c2.setId(2L);
+        c3.setId(3L);
 
         c2.seguir(c1);
         c3.seguir(c1);
@@ -66,10 +66,10 @@ public class CinemaniacoTest {
         Cinemaniaco b = new Cinemaniaco(p2, "B");
         Cinemaniaco c = new Cinemaniaco(p3, "C");
         Cinemaniaco d = new Cinemaniaco(p4, "D");
-        a.setId_Cinemaniaco(1L);
-        b.setId_Cinemaniaco(2L);
-        c.setId_Cinemaniaco(3L);
-        d.setId_Cinemaniaco(4L);
+        a.setId(1L);
+        b.setId(2L);
+        c.setId(3L);
+        d.setId(4L);
 
         // A sigue a C y D
         a.seguir(c);

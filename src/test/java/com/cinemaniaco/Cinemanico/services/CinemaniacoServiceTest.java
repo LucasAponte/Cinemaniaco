@@ -124,7 +124,7 @@ class CinemaniacoServiceTest {
 
             Cinemaniaco resultado = service.buscarPorApodo("juancho");
 
-            assertThat(resultado.getId_Cinemaniaco()).isEqualTo(1L);
+            assertThat(resultado.getId()).isEqualTo(1L);
         }
     }
 
