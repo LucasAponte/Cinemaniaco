@@ -18,7 +18,7 @@ public class PersonaResponse {
     public static PersonaResponse from(Persona persona) {
         if (persona == null) return null;
         return new PersonaResponse(
-                persona.getId_Persona(),
+                persona.getId(),
                 persona.getNombre(),
                 persona.getApellido(),
                 persona.getEdad(),

@@ -15,8 +15,8 @@ import lombok.Setter;
 public class Puntuacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Puntuacion;
-    @ManyToOne(targetEntity = Cinemaniaco.class, optional = false)
+    private Long id;
+    @ManyToOne(optional = false)
     @JoinColumn(name = "cinemaniaco_id")
     private Cinemaniaco cinemaniaco;
     private double puntuacion;

@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface CinemaniacoRepository extends JpaRepository<Cinemaniaco, Long> {
     Optional<Cinemaniaco> findByApodo(String apodo);
+
+    boolean existsByApodo(String apodo);
 }
 

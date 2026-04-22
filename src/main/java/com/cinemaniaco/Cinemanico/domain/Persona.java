@@ -1,10 +1,7 @@
 package com.cinemaniaco.Cinemanico.domain;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,22 +15,23 @@ import lombok.Setter;
 public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Persona;
+    private Long id;
     private String nombre;
-    private int edad;
     private String apellido;
+    private int edad;
+    @Column(name="email" ,unique = true, nullable = false)
     private String email;
 
-    public Persona(String nombre, int edad, String apellido) {
+    public Persona(String nombre, String apellido, int edad ) {
         this.nombre = nombre;
-        this.edad = edad;
         this.apellido = apellido;
+        this.edad = edad;
     }
 
-    public Persona(int edad, String nombre, String apellido, String email) {
-        this.edad = edad;
+    public Persona(String nombre, String apellido, int edad, String email) {
         this.nombre = nombre;
         this.apellido = apellido;
+        this.edad = edad;
         this.email = email;
     }
 }

@@ -8,7 +8,7 @@ public class PersonaTest {
     @DisplayName("Creación de Persona devuelve valor correcto")
     public void creacionDePersonaDevuelveValorCorrecto() {
         // Crear una instancia de Persona
-        Persona persona = new Persona("Juan", 30, "Pérez");
+        Persona persona = new Persona("Juan", "Pérez",30 );
 
         // Verificar que los atributos se asignaron correctamente
         assert persona.getNombre().equals("Juan");

@@ -3,6 +3,7 @@ package com.cinemaniaco.Cinemanico.service;
 import com.cinemaniaco.Cinemanico.domain.Cinemaniaco;
 import com.cinemaniaco.Cinemanico.domain.Persona;
 import com.cinemaniaco.Cinemanico.exception.BusinessException;
+import com.cinemaniaco.Cinemanico.exception.ConflictException;
 import com.cinemaniaco.Cinemanico.exception.ResourceNotFoundException;
 import com.cinemaniaco.Cinemanico.dto.request.CinemaniacoRequest;
 import com.cinemaniaco.Cinemanico.dto.response.CinemaniacoResponse;
@@ -38,20 +39,37 @@ public class CinemaniacoService {
 
     @Transactional
     public CinemaniacoResponse registrar(CinemaniacoRequest request) {
+
+        validarUnicidad(request);
+
         Persona persona = new Persona(
-                request.getPersona().getEdad(),
                 request.getPersona().getNombre(),
                 request.getPersona().getApellido(),
+                request.getPersona().getEdad(),
                 request.getPersona().getEmail()
         );
         Persona personaGuardada = personaRepository.save(persona);
         Cinemaniaco cinemaniaco = new Cinemaniaco(personaGuardada, request.getApodo());
         return CinemaniacoResponse.from(cinemaniacoRepository.save(cinemaniaco));
     }
+    private void validarUnicidad(CinemaniacoRequest request) {
+
+        String email = request.getPersona().getEmail();
+        String apodo = request.getApodo();
+        if (personaRepository.existsByEmail(email)) {
+            throw new ConflictException("Ya existe una persona con el email: " + email);
+        }
+        if (cinemaniacoRepository.existsByApodo(apodo)) {
+            throw new ConflictException("El apodo ya está en uso: " + apodo);
+        }
+    }
 
     @Transactional
     public CinemaniacoResponse actualizarApodo(Long id, String nuevoApodo) {
         Cinemaniaco cinemaniaco = buscarPorId(id);
+            if (cinemaniacoRepository.existsByApodo(nuevoApodo)) {
+                throw new ConflictException("El apodo ya está en uso: " + nuevoApodo);
+            }
         cinemaniaco.setApodo(nuevoApodo);
         return CinemaniacoResponse.from(cinemaniacoRepository.save(cinemaniaco));
     }

@@ -55,7 +55,7 @@ public class PeliculaController {
     // ─── Puntuaciones ───────────────────────────────────────────────────────
 
     @PostMapping("/{id}/puntuaciones")
-    public ResponseEntity<Double> puntuar(
+    public ResponseEntity<PeliculaResponse> puntuar(
             @PathVariable Long id,
             @Valid @RequestBody PuntuacionRequest request) {
         return ResponseEntity.ok(peliculaService.puntuarPelicula(id, request));
@@ -70,9 +70,7 @@ public class PeliculaController {
     public ResponseEntity<PuntuacionResponse> obtenerPuntuacionDe(
             @PathVariable Long id,
             @PathVariable Long cinemaniacoId) {
-        PuntuacionResponse puntuacion = peliculaService.obtenerPuntuacionDe(id, cinemaniacoId);
-        if (puntuacion == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(puntuacion);
+        return ResponseEntity.ok(peliculaService.obtenerPuntuacionDe(id, cinemaniacoId));
     }
 
     // ─── Comentarios ────────────────────────────────────────────────────────
@@ -84,8 +82,9 @@ public class PeliculaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(peliculaService.comentarPelicula(id, request));
     }
 
-    @PostMapping("/comentarios/{comentarioId}/respuestas")
+    @PostMapping("/{id}/comentarios/{comentarioId}/respuestas")
     public ResponseEntity<ComentarioResponse> responder(
+            @PathVariable Long id,
             @PathVariable Long comentarioId,
             @Valid @RequestBody ComentarioRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -94,15 +93,17 @@ public class PeliculaController {
 
     // ─── Me Gusta ───────────────────────────────────────────────────────────
 
-    @PostMapping("/comentarios/{comentarioId}/megusta")
-    public ResponseEntity<Integer> darMeGusta(
+    @PostMapping("/{id}/comentarios/{comentarioId}/megusta")
+    public ResponseEntity<ComentarioResponse> darMeGusta(
+            @PathVariable Long id,
             @PathVariable Long comentarioId,
             @RequestParam Long cinemaniacoId) {
         return ResponseEntity.ok(peliculaService.darMeGusta(comentarioId, cinemaniacoId));
     }
 
-    @DeleteMapping("/comentarios/{comentarioId}/megusta")
-    public ResponseEntity<Integer> quitarMeGusta(
+    @DeleteMapping("/{id}/comentarios/{comentarioId}/megusta")
+    public ResponseEntity<ComentarioResponse> quitarMeGusta(
+            @PathVariable Long id,
             @PathVariable Long comentarioId,
             @RequestParam Long cinemaniacoId) {
         return ResponseEntity.ok(peliculaService.quitarMeGusta(comentarioId, cinemaniacoId));
@@ -118,7 +119,7 @@ public class PeliculaController {
     //TODO hacer otra entidad que sea OpenIAClientee que se encargue de eso y no mezclarlo con el servicio de Pelicula.
     @PostMapping("/{id}/resumen-ia")
     public ResponseEntity<String> generarResumenIA(@PathVariable Long id) {
-        return ResponseEntity.ok(peliculaService.generarResumenIA(id));
+        return ResponseEntity.ok(peliculaService.generarComentarioEnComunIA(id));
     }
     /**
      * GET /api/peliculas/{id}/resumen-ia
@@ -126,6 +127,6 @@ public class PeliculaController {
      */
     @GetMapping("/{id}/resumen-ia")
     public ResponseEntity<String> obtenerResumenIA(@PathVariable Long id) {
-        return ResponseEntity.ok(peliculaService.obtenerResumenIA(id));
+        return ResponseEntity.ok(peliculaService.obtenerComentarioEnComunIa(id));
     }
 }

@@ -18,7 +18,7 @@ public class CinemaniacoResponse {
     public static CinemaniacoResponse from(Cinemaniaco c) {
         if (c == null) return null;
         return new CinemaniacoResponse(
-                c.getId_Cinemaniaco(),
+                c.getId(),
                 c.getApodo(),
                 PersonaResponse.from(c.getPersona()),
                 c.contarSeguidores(),

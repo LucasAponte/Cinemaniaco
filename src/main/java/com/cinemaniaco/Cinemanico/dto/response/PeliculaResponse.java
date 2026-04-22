@@ -25,7 +25,7 @@ public class PeliculaResponse {
     public static PeliculaResponse from(Pelicula p) {
         if (p == null) return null;
         return new PeliculaResponse(
-                p.getId_Pelicula(),
+                p.getId(),
                 p.getTitulo(),
                 p.getDirector(),
                 p.getAnioEstreno(),
@@ -36,7 +36,7 @@ public class PeliculaResponse {
                 p.getComentarios() != null
                         ? p.getComentarios().stream().map(ComentarioResponse::from).toList()
                         : List.of(),
-                p.getResumenIA()
+                p.getComentarioComunidadIA()
         );
     }
 }

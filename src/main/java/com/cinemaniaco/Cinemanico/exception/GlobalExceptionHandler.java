@@ -20,11 +20,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(
-                        HttpStatus.NOT_FOUND.value(),
-                        ex.getMessage(),
-                        null
-                ));
+                .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null));
     }
 
     // ─── 400 — Regla de negocio violada ─────────────────────────────────────
@@ -33,11 +29,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusiness(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                        HttpStatus.BAD_REQUEST.value(),
-                        ex.getMessage(),
-                        null
-                ));
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null));
+    }
+
+    // ─── 409 — Conflicto de datos existentes ────────────────────────────────
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), null));
     }
 
     // ─── 422 — Validación de @Valid fallida ─────────────────────────────────
@@ -63,11 +64,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "Error interno del servidor",
-                        null
-                ));
+                .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error interno del servidor", null));
     }
 
     // ─── Estructura de respuesta de error ───────────────────────────────────
@@ -78,7 +75,6 @@ public class GlobalExceptionHandler {
             Map<String, String> errores,
             LocalDateTime timestamp
     ) {
-        // Constructor compacto que inyecta el timestamp automáticamente
         public ErrorResponse(int status, String mensaje, Map<String, String> errores) {
             this(status, mensaje, errores, LocalDateTime.now());
         }

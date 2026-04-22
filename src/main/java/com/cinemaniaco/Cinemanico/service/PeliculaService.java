@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class PeliculaService {
     private final ComentarioRepository comentarioRepository;
     private final RestTemplate restTemplate;
 
-    @Value("${openai.api.key}")
+    @Value("${openai.api.key:}")
     private String openAiApiKey;
 
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
@@ -82,13 +83,13 @@ public class PeliculaService {
     // ─── Puntuaciones ───────────────────────────────────────────────────────
 
     @Transactional
-    public double puntuarPelicula(Long peliculaId, PuntuacionRequest request) {
+    public PeliculaResponse puntuarPelicula(Long peliculaId, PuntuacionRequest request) {
         Pelicula pelicula     = buscarPorId(peliculaId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(request.getCinemaniacoId());
 
         pelicula.anadirPuntuacion(cinemaniaco, request.getPuntos());
         peliculaRepository.save(pelicula);
-        return pelicula.calcularPuntuacionPromedio();
+        return PeliculaResponse.from(pelicula);
     }
 
     public double obtenerPromedio(Long peliculaId) {
@@ -99,6 +100,8 @@ public class PeliculaService {
         Pelicula pelicula       = buscarPorId(peliculaId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
         Puntuacion puntuacion   = pelicula.buscarPuntuacionPorCinemaniaco(cinemaniaco);
+        if (puntuacion == null)
+            throw new ResourceNotFoundException("El cinemaniaco aún no puntuó esta película");
         return PuntuacionResponse.from(puntuacion);
     }
 
@@ -129,29 +132,29 @@ public class PeliculaService {
     }
 
     @Transactional
-    public int darMeGusta(Long comentarioId, Long cinemaniacoId) {
+    public ComentarioResponse darMeGusta(Long comentarioId, Long cinemaniacoId) {
         Comentario comentario   = buscarComentario(comentarioId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
 
         comentario.agregarMeGusta(cinemaniaco);
         comentarioRepository.save(comentario);
-        return comentario.getMeGusta();
+        return ComentarioResponse.from(comentario);
     }
 
     @Transactional
-    public int quitarMeGusta(Long comentarioId, Long cinemaniacoId) {
+    public ComentarioResponse quitarMeGusta(Long comentarioId, Long cinemaniacoId) {
         Comentario comentario   = buscarComentario(comentarioId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
 
         comentario.quitarMeGustaDe(cinemaniaco);
         comentarioRepository.save(comentario);
-        return comentario.getMeGusta();
+        return ComentarioResponse.from(comentario);
     }
 
     // ─── Resumen IA ─────────────────────────────────────────────────────────
 
     @Transactional
-    public String generarResumenIA(Long peliculaId) {
+    public String generarComentarioEnComunIA(Long peliculaId) {
         Pelicula pelicula = buscarPorId(peliculaId);
 
         List<String> textos = pelicula.getComentarios().stream()
@@ -161,17 +164,20 @@ public class PeliculaService {
         if (textos.isEmpty())
             throw new BusinessException("La película no tiene comentarios aún para generar un resumen");
 
+        if (openAiApiKey == null || openAiApiKey.isBlank())
+            throw new BusinessException("La integración con OpenAI no está configurada en este entorno");
+
         String resumen = llamarOpenAI(construirPrompt(pelicula.getTitulo(), textos));
-        pelicula.setResumenIA(resumen);
+        pelicula.setComentarioComunidadIA(resumen);
         peliculaRepository.save(pelicula);
         return resumen;
     }
 
-    public String obtenerResumenIA(Long peliculaId) {
+    public String obtenerComentarioEnComunIa(Long peliculaId) {
         Pelicula pelicula = buscarPorId(peliculaId);
-        if (pelicula.getResumenIA() == null)
+        if (pelicula.getComentarioComunidadIA() == null)
             throw new BusinessException("Todavía no se generó un resumen para esta película");
-        return pelicula.getResumenIA();
+        return pelicula.getComentarioComunidadIA();
     }
 
     // ─── Auxiliares internos ────────────────────────────────────────────────
@@ -199,7 +205,6 @@ public class PeliculaService {
         comentarios.forEach(c -> sb.append("- ").append(c).append("\n"));
         return sb.toString();
     }
-    //TODO Ver de hacer una clase para todo lo que es IA
 
     @SuppressWarnings("unchecked")
     private String llamarOpenAI(String prompt) {
@@ -224,8 +229,16 @@ public class PeliculaService {
             List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
             return (String) message.get("content");
+        } catch (HttpClientErrorException e) {
+            String msg = switch (e.getStatusCode().value()) {
+                case 401 -> "API key de OpenAI inválida o no autorizada";
+                case 429 -> "Se superó el límite de solicitudes de OpenAI";
+                case 400 -> "Solicitud malformada enviada a OpenAI";
+                default  -> "Error del cliente al llamar a OpenAI: " + e.getStatusCode();
+            };
+            throw new BusinessException(msg);
         } catch (Exception e) {
-            throw new BusinessException("Error al comunicarse con OpenAI: " + e.getMessage());
+            throw new BusinessException("Error inesperado al comunicarse con OpenAI: " + e.getMessage());
         }
     }
 }

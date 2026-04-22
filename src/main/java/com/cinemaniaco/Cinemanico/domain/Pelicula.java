@@ -15,7 +15,7 @@ public class Pelicula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Pelicula;
+    private Long id;
 
     private String titulo;
     private String director;
@@ -37,7 +37,7 @@ public class Pelicula {
 
     //Debería cambiar el nombre a comentario IA?
     @Column(columnDefinition = "TEXT")
-    private String resumenIA;
+    private String comentarioComunidadIA;
 
     public Pelicula(String titulo, String director, int anioEstreno, List<String> actores, List<String> generos) {
         this.titulo = titulo;

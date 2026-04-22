@@ -42,9 +42,9 @@ class CinemaniacoServiceTest {
 
     @BeforeEach
     void setUp() {
-        persona = new Persona(1L, "Juan", 25, "Pérez", "juan@mail.com");
+        persona = new Persona(1L, "Juan","Pérez", 25, "juan@mail.com");
         cinemaniaco = new Cinemaniaco(1L, persona, "juancho", new java.util.ArrayList<>(),
-                new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                new java.util.ArrayList<>());
     }
 
     // ─── listarTodos ─────────────────────────────────────────────────────────
@@ -124,7 +124,7 @@ class CinemaniacoServiceTest {
 
             Cinemaniaco resultado = service.buscarPorApodo("juancho");
 
-            assertThat(resultado.getId_Cinemaniaco()).isEqualTo(1L);
+            assertThat(resultado.getId()).isEqualTo(1L);
         }
     }
 
@@ -223,7 +223,7 @@ class CinemaniacoServiceTest {
         @DisplayName("retorna true y guarda ambos cuando el seguimiento es exitoso")
         void seguirRetornaTrueYGuardaAmbosDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
 
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
             when(cinemaniacoRepository.findById(2L)).thenReturn(Optional.of(seguido));
@@ -239,7 +239,7 @@ class CinemaniacoServiceTest {
         @DisplayName("retorna false y no guarda si ya lo seguía")
         void seguirRetornaFalseSiYaLoSeguiaDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
             cinemaniaco.getSeguidos().add(seguido); // ya lo sigue
 
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
@@ -261,7 +261,7 @@ class CinemaniacoServiceTest {
         @DisplayName("retorna true si dejó de seguir exitosamente")
         void dejarDeSeguirRetornaTrueSiDejoDeSeguirDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
             cinemaniaco.getSeguidos().add(seguido);
 
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
@@ -277,7 +277,7 @@ class CinemaniacoServiceTest {
         @DisplayName("retorna false si no lo seguía")
         void dejarDeSeguirRetornaFalseSiNoLoSeguiaDevuelveValorCorrecto() {
             Cinemaniaco seguido = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
 
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
             when(cinemaniacoRepository.findById(2L)).thenReturn(Optional.of(seguido));
@@ -298,9 +298,9 @@ class CinemaniacoServiceTest {
         @DisplayName("retorna la intersección de seguidos entre dos cinemaniacos")
         void amigosEnComunRetornaInterseccionDevuelveValorCorrecto() {
             Cinemaniaco enComun = new Cinemaniaco(3L, persona, "encomun", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
             Cinemaniaco otro = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
 
             cinemaniaco.getSeguidos().add(enComun);
             otro.getSeguidos().add(enComun);
@@ -318,7 +318,7 @@ class CinemaniacoServiceTest {
         @DisplayName("retorna lista vacía si no hay seguidos en común")
         void amigosEnComunRetornaVacioDevuelveValorCorrecto() {
             Cinemaniaco otro = new Cinemaniaco(2L, persona, "otro", new java.util.ArrayList<>(),
-                    new java.util.ArrayList<>(), new java.util.ArrayList<>());
+                    new java.util.ArrayList<>());
 
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
             when(cinemaniacoRepository.findById(2L)).thenReturn(Optional.of(otro));
