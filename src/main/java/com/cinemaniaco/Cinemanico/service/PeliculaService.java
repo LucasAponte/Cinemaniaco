@@ -138,18 +138,17 @@ public class PeliculaService {
 
         comentario.agregarMeGusta(cinemaniaco);
         comentarioRepository.save(comentario);
-        comentario.getMeGusta();
         return ComentarioResponse.from(comentario);
     }
 
     @Transactional
-    public int quitarMeGusta(Long comentarioId, Long cinemaniacoId) {
+    public ComentarioResponse quitarMeGusta(Long comentarioId, Long cinemaniacoId) {
         Comentario comentario   = buscarComentario(comentarioId);
         Cinemaniaco cinemaniaco = buscarCinemaniaco(cinemaniacoId);
 
         comentario.quitarMeGustaDe(cinemaniaco);
         comentarioRepository.save(comentario);
-        return comentario.getMeGusta();
+        return ComentarioResponse.from(comentario);
     }
 
     // ─── Resumen IA ─────────────────────────────────────────────────────────

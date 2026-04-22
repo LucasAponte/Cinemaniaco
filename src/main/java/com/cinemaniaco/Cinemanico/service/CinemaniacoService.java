@@ -55,12 +55,9 @@ public class CinemaniacoService {
 
         String email = request.getPersona().getEmail();
         String apodo = request.getApodo();
-        System.out.println(email +"  " +apodo);
-        System.out.println(personaRepository.existsByEmail(email));
         if (personaRepository.existsByEmail(email)) {
             throw new BusinessException("Ya existe una persona con el email: " + email);
         }
-        System.out.println(cinemaniacoRepository.existsByApodo(apodo));
         if (cinemaniacoRepository.existsByApodo(apodo)) {
             throw new BusinessException("El apodo ya está en uso: " + apodo);
         }
@@ -69,6 +66,9 @@ public class CinemaniacoService {
     @Transactional
     public CinemaniacoResponse actualizarApodo(Long id, String nuevoApodo) {
         Cinemaniaco cinemaniaco = buscarPorId(id);
+            if (cinemaniacoRepository.existsByApodo(nuevoApodo)) {
+                throw new BusinessException("El apodo ya está en uso: " + nuevoApodo);
+            }
         cinemaniaco.setApodo(nuevoApodo);
         return CinemaniacoResponse.from(cinemaniacoRepository.save(cinemaniaco));
     }

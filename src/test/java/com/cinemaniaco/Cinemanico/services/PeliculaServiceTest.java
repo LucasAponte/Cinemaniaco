@@ -358,7 +358,7 @@ class PeliculaServiceTest {
             when(cinemaniacoRepository.findById(1L)).thenReturn(Optional.of(cinemaniaco));
             when(comentarioRepository.save(any())).thenReturn(comentario);
 
-            int total = service.quitarMeGusta(1L, 1L);
+            int total = service.quitarMeGusta(1L, 1L).getMeGusta();
 
             assertThat(total).isEqualTo(0);
         }
@@ -374,7 +374,7 @@ class PeliculaServiceTest {
             when(cinemaniacoRepository.findById(2L)).thenReturn(Optional.of(c2));
             when(comentarioRepository.save(any())).thenReturn(comentario);
 
-            int total = service.quitarMeGusta(1L, 2L);
+            int total = service.quitarMeGusta(1L, 2L).getMeGusta();
 
             assertThat(total).isEqualTo(0);
         }

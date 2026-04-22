@@ -102,7 +102,7 @@ public class PeliculaController {
     }
 
     @DeleteMapping("/{id}/comentarios/{comentarioId}/megusta")
-    public ResponseEntity<Integer> quitarMeGusta(
+    public ResponseEntity<ComentarioResponse> quitarMeGusta(
             @PathVariable Long id,
             @PathVariable Long comentarioId,
             @RequestParam Long cinemaniacoId) {
